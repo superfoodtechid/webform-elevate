@@ -489,35 +489,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Jika URL Apps Script aktif dan fitur diaktifkan, kirim data ke Google Sheets
     if (ENABLE_SHEET_SUBMISSION && WEB_APP_URL && WEB_APP_URL !== "YOUR_DEPLOYED_WEB_APP_URL") {
-      const fetchPromises = sheetsPayloads.map(payload => {
-        return fetch(WEB_APP_URL, {
-          method: "POST",
-          mode: "cors",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify(payload)
-        })
-          .then(response => response.json());
-      });
-
-      Promise.all(fetchPromises)
-        .then(results => {
-          const failed = results.filter(resData => resData.status !== "success");
-          if (failed.length === 0) {
-            showToast('Sinkronisasi Sukses', 'Semua kredensial berhasil disimpan di Google Sheets!', 'success');
-            finalizeSubmission('success');
-          } else {
-            const errMsgs = failed.map(f => f.message).join(', ');
-            showToast('Sinkronisasi Gagal', 'Beberapa data gagal disimpan ke Google Sheets.', 'error');
-            finalizeSubmission('error', errMsgs);
+      // Kirim sekuensial (satu per satu) untuk menghindari race condition pada LockService Apps Script
+      (async () => {
+        const results = [];
+        for (const payload of sheetsPayloads) {
+          try {
+            const response = await fetch(WEB_APP_URL, {
+              method: "POST",
+              mode: "cors",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(payload)
+            });
+            const resData = await response.json();
+            results.push(resData);
+          } catch (err) {
+            results.push({ status: "error", message: err.toString() });
           }
-        })
-        .catch(error => {
-          console.error("Error submitting to Sheets:", error);
-          showToast('Koneksi Gagal', 'Gagal terhubung dengan server, data lokal tetap diamankan.', 'error');
-          finalizeSubmission('error', 'Koneksi terputus atau URL tidak valid');
-        });
+        }
+
+        const failed = results.filter(resData => resData.status !== "success");
+        if (failed.length === 0) {
+          showToast('Sinkronisasi Sukses', 'Semua kredensial berhasil disimpan di Google Sheets!', 'success');
+          finalizeSubmission('success');
+        } else {
+          const errMsgs = failed.map(f => f.message).join(', ');
+          showToast('Sinkronisasi Gagal', 'Beberapa data gagal disimpan ke Google Sheets.', 'error');
+          finalizeSubmission('error', errMsgs);
+        }
+      })().catch(error => {
+        console.error("Error submitting to Sheets:", error);
+        showToast('Koneksi Gagal', 'Gagal terhubung dengan server, data lokal tetap diamankan.', 'error');
+        finalizeSubmission('error', 'Koneksi terputus atau URL tidak valid');
+      });
     } else {
       // Mock simulation delay (1.5 detik)
       setTimeout(() => {
