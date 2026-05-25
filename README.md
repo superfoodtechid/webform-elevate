@@ -4,6 +4,62 @@ Website formulir integrasi modern dan premium untuk melengkapi data owner, nama 
 
 ---
 
+## 🔄 Alur Sistem
+
+### Alur Pengisian & Pengiriman Data
+
+```mermaid
+flowchart TD
+    A([User Membuka Form]) --> B[Isi Nama Owner dan Nama Outlet]
+    B --> C[Pilih BD Penanggung Jawab]
+    C --> D[Pilih Aplikator]
+    D --> E{Tambah akun lebih dari satu?}
+    E -- Ya --> F[Klik Tambah, buat row baru]
+    F --> G[Isi Kredensial per Aplikator]
+    E -- Tidak --> G
+    G --> H[Klik Simpan dan Integrasikan]
+    H --> I{Validasi Form}
+    I -- Ada Error --> J[Tampilkan pesan error pada field]
+    J --> G
+    I -- Valid --> K[Paket data menjadi JSON Payload]
+    K --> L[Kirim POST ke Google Apps Script]
+    L --> M{Response Apps Script}
+    M -- Sukses --> N[Tulis ke Google Sheets]
+    M -- Gagal --> O[Tampilkan Toast Error]
+    N --> P[Modal Sukses dan Ringkasan Data]
+    P --> Q([Selesai atau Isi Formulir Baru])
+```
+
+### Logika Kredensial per Aplikator
+
+```mermaid
+flowchart LR
+    APP{Aplikator Dipilih}
+
+    APP -- GoFood --> GF[Input Email Custom Manager]
+    GF --> GF_OUT[Sheet kol.Y - email]
+
+    APP -- GrabFood --> GR[Input Username dan Password]
+    GR --> GR_OUT[Sheet kol.Z - username\nkol.AB - password]
+
+    APP -- ShopeeFood --> SH[Input Nama Portal]
+    SH --> BD{BD yang Dipilih}
+    BD -- BD A --> SH_A[auto7303]
+    BD -- BD B --> SH_B[auto7304]
+    BD -- BD C --> SH_C[auto7307]
+    BD -- BD D --> SH_D[auto7308]
+    SH_A --> SH_OUT[Sheet kol.W - merchantName\nkol.Z - username\nkol.AB - password]
+    SH_B --> SH_OUT
+    SH_C --> SH_OUT
+    SH_D --> SH_OUT
+
+    GF_OUT --> SHEET[(Google Sheets)]
+    GR_OUT --> SHEET
+    SH_OUT --> SHEET
+```
+
+---
+
 ## ✨ Fitur Utama
 1. **Adaptive Input Fields**: Tampilan kolom kredensial akan otomatis berubah secara dinamis berdasarkan aplikator terpilih:
    * **GoFood**: Hanya menampilkan input **Email** dengan validasi regex email terdaftar.
