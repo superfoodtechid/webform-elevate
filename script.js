@@ -20,14 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Success Modal Elements
   const successModal = document.getElementById('success-modal');
-  const jsonOutput = document.getElementById('json-output');
-  const copyJsonBtn = document.getElementById('copy-json-btn');
-  const downloadJsonBtn = document.getElementById('download-json-btn');
+  const submissionSummary = document.getElementById('submission-summary');
   const closeModalBtn = document.getElementById('close-modal-btn');
 
   // Inputs for static fields
   const ownerNameInput = document.getElementById('owner-name');
   const outletNameInput = document.getElementById('outlet-name');
+  const bdSelect = document.getElementById('bd-select');
 
   let submittedData = null; // Storing submitted payload for export
 
@@ -59,6 +58,40 @@ document.addEventListener('DOMContentLoaded', () => {
       'info'
     );
   });
+
+  /* ==========================================================================
+     BD DROPDOWN — FLOATING LABEL & VALIDATION
+     ========================================================================== */
+  // Toggle floating label class when BD has a value
+  function updateBdSelectLabel() {
+    if (bdSelect.value) {
+      bdSelect.classList.add('has-value');
+    } else {
+      bdSelect.classList.remove('has-value');
+    }
+  }
+
+  bdSelect.addEventListener('change', () => {
+    updateBdSelectLabel();
+    validateBdSelect();
+  });
+
+  function validateBdSelect() {
+    const group = bdSelect.closest('.select-group');
+    if (!group) return true;
+    if (bdSelect.value) {
+      group.classList.remove('is-invalid');
+      group.classList.add('is-valid');
+      return true;
+    } else {
+      group.classList.remove('is-valid');
+      group.classList.add('is-invalid');
+      return false;
+    }
+  }
+
+  // Init label state (in case browser restores a value)
+  updateBdSelectLabel();
 
   /* ==========================================================================
      DYNAMIC APILIKATOR CONTROLLER
@@ -399,6 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Trigger visual validation (tidak memblokir submit)
     validateField(ownerNameInput);
     validateField(outletNameInput);
+    validateBdSelect();
 
     selectedAplikators.forEach(aplikator => {
       let selector = '';
@@ -437,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
           sheetsPayloads.push({
             owner: ownerNameInput.value.trim(),
             outlet: outletNameInput.value.trim(),
+            bd: bdSelect.value,
             aplikator: 'GoFood',
             email: emailVal
           });
@@ -452,6 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
           sheetsPayloads.push({
             owner: ownerNameInput.value.trim(),
             outlet: outletNameInput.value.trim(),
+            bd: bdSelect.value,
             aplikator: 'GrabFood',
             username: userVal,
             password: passVal
@@ -460,15 +496,29 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (aplikator === 'shopee') {
         const portalInputs = document.querySelectorAll('#pane-shopee .shopee-portal-input');
         credentialsPayload.shopee = [];
+
+        // Mapping BD → kredensial (key sesuai value option di dropdown)
+        const bdMap = {
+          'BD A': { username: 'auto7303', password: 'Auto@7303' },
+          'BD B': { username: 'auto7304', password: 'Auto@7304_' },
+          'BD C': { username: 'auto7307', password: 'Auto@7307' },
+          'BD D': { username: 'auto7308', password: 'Auto@7308' }
+        };
+        const selectedBd = bdSelect?.value || '';
+        const bdCreds = bdMap[selectedBd] || { username: '', password: '' };
+
         portalInputs.forEach(input => {
           const portalVal = input.value.trim();
-          credentialsPayload.shopee.push({ namaPortal: portalVal });
+          credentialsPayload.shopee.push({ namaPortal: portalVal, bd: selectedBd });
 
           sheetsPayloads.push({
             owner: ownerNameInput.value.trim(),
             outlet: outletNameInput.value.trim(),
+            bd: bdSelect.value,
             aplikator: 'ShopeeFood',
-            merchantName: portalVal
+            merchantName: portalVal,
+            username: bdCreds.username,
+            password: bdCreds.password
           });
         });
       }
@@ -478,6 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submittedData = {
       namaOwner: ownerNameInput.value.trim(),
       namaOutlet: outletNameInput.value.trim(),
+      bd: bdSelect.value,
       aplikator: selectedAplikators.map(val => capitalizeWord(val)),
       kredensial: credentialsPayload,
       metadata: {
@@ -542,28 +593,63 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkmarkCircle = document.querySelector('.checkmark-circle');
 
     if (status === 'error') {
-      modalTitle.textContent = "Butuh Tindakan Manual!";
+      modalTitle.textContent = "Sinkronisasi Gagal!";
       modalTitle.style.color = "HSL(var(--color-invalid))";
-      modalDesc.innerHTML = `Sinkronisasi otomatis ke sistem gagal. <b>Data Anda telah dipaketkan.</b> Silakan unduh atau salin JSON di bawah ini dan serahkan ke tim admin. ${errorMsg ? `<br><small style="color:var(--text-muted)">Detail: ${errorMsg}</small>` : ''}`;
-
-      // Ubah warna ikon menjadi oranye/merah sebagai peringatan
-      if (checkmarkSvg) checkmarkSvg.style.stroke = "#f59e0b"; // Warning Orange
+      modalDesc.innerHTML = `Gagal menyimpan ke Google Sheets. ${errorMsg ? `<br><small style="color:var(--text-muted)">Detail: ${errorMsg}</small>` : ''}`;
+      if (checkmarkSvg) checkmarkSvg.style.stroke = "#f59e0b";
       if (checkmarkCircle) checkmarkCircle.style.stroke = "#f59e0b";
     } else {
       modalTitle.textContent = "Kredensial Berhasil Didaftarkan!";
       modalTitle.style.color = "var(--text-primary)";
-      modalDesc.innerHTML = "Data Anda telah divalidasi dan dikirim dengan aman. Berikut adalah payload data integrasi yang dihasilkan:";
-
-      // Kembalikan ke warna hijau sukses
+      modalDesc.innerHTML = "Data berikut telah berhasil dikirim:";
       if (checkmarkSvg) checkmarkSvg.style.stroke = "HSL(var(--color-valid))";
       if (checkmarkCircle) checkmarkCircle.style.stroke = "HSL(var(--color-valid))";
     }
 
-    // Inject formatted JSON ke panel modal
-    jsonOutput.textContent = JSON.stringify(submittedData, null, 2);
+    // Render ringkasan input yang mudah dibaca
+    submissionSummary.innerHTML = buildSummaryHTML(submittedData);
 
     // Buka Success Modal
     successModal.classList.add('open');
+  }
+
+  function buildSummaryHTML(data) {
+    if (!data) return '';
+    let html = `
+      <div class="summary-row"><span class="summary-label">Owner</span><span class="summary-value">${data.namaOwner || '-'}</span></div>
+      <div class="summary-row"><span class="summary-label">Outlet</span><span class="summary-value">${data.namaOutlet || '-'}</span></div>
+      <div class="summary-row"><span class="summary-label">BD</span><span class="summary-value">${data.bd || '-'}</span></div>
+      <div class="summary-divider"></div>
+    `;
+
+    if (data.kredensial.gofood && data.kredensial.gofood.length > 0) {
+      html += `<div class="summary-platform">GoFood</div>`;
+      data.kredensial.gofood.forEach((item, i) => {
+        html += `<div class="summary-row"><span class="summary-label">Email ${data.kredensial.gofood.length > 1 ? i + 1 : ''}</span><span class="summary-value">${item.email || '-'}</span></div>`;
+      });
+      html += `<div class="summary-divider"></div>`;
+    }
+
+    if (data.kredensial.grab && data.kredensial.grab.length > 0) {
+      html += `<div class="summary-platform">GrabFood</div>`;
+      data.kredensial.grab.forEach((item, i) => {
+        const label = data.kredensial.grab.length > 1 ? ` ${i + 1}` : '';
+        html += `
+          <div class="summary-row"><span class="summary-label">Username${label}</span><span class="summary-value">${item.username || '-'}</span></div>
+          <div class="summary-row"><span class="summary-label">Password${label}</span><span class="summary-value">${item.password ? '••••••••' : '-'}</span></div>
+        `;
+      });
+      html += `<div class="summary-divider"></div>`;
+    }
+
+    if (data.kredensial.shopee && data.kredensial.shopee.length > 0) {
+      html += `<div class="summary-platform">ShopeeFood</div>`;
+      data.kredensial.shopee.forEach((item, i) => {
+        html += `<div class="summary-row"><span class="summary-label">Nama Portal ${data.kredensial.shopee.length > 1 ? i + 1 : ''}</span><span class="summary-value">${item.namaPortal || '-'}</span></div>`;
+      });
+    }
+
+    return html;
   }
 
   /* ==========================================================================
@@ -587,51 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Form tidak di-reset agar semua inputan user tidak hilang setelah submit
   }
 
-  // Copy JSON Payload to Clipboard
-  copyJsonBtn.addEventListener('click', () => {
-    const textToCopy = jsonOutput.textContent;
-    navigator.clipboard.writeText(textToCopy)
-      .then(() => {
-        // Toggle text/icons
-        const copyDefault = copyJsonBtn.querySelector('.copy-text-default');
-        const copySuccess = copyJsonBtn.querySelector('.copy-text-success');
 
-        copyDefault.classList.add('hidden');
-        copySuccess.classList.remove('hidden');
-
-        showToast('Tersalin!', 'JSON Payload disalin ke papan klip.', 'success');
-
-        setTimeout(() => {
-          copyDefault.classList.remove('hidden');
-          copySuccess.classList.add('hidden');
-        }, 2000);
-      })
-      .catch(err => {
-        console.error('Failed to copy text: ', err);
-        showToast('Gagal Menyalin', 'Gagal mengakses papan klip perangkat.', 'error');
-      });
-  });
-
-  // Download JSON Payload as file
-  downloadJsonBtn.addEventListener('click', () => {
-    if (!submittedData) return;
-
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(submittedData, null, 2));
-    const downloadAnchor = document.createElement('a');
-
-    // Formulate a beautiful safe name
-    const outletSlug = submittedData.namaOutlet.toLowerCase().replace(/[^a-z0-9]/g, '_');
-    const activeApps = Array.from(aplikatorCheckboxes).filter(cb => cb.checked).map(cb => cb.value).join('_');
-    const filename = `kredensial_${outletSlug}_${activeApps || 'multi'}.json`;
-
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", filename);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-
-    showToast('Unduhan Berhasil', `${filename} disimpan ke perangkat Anda.`, 'success');
-  });
 
   /* ==========================================================================
      TOAST NOTIFICATION ENGINE

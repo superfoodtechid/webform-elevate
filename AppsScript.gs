@@ -9,8 +9,8 @@
  * Kolom D (Index 3)  -> Aplikasi (Nama Aplikator: GoFood / Grab / Shopee)
  * Kolom W (Index 22) -> Merchant Name (jika Shopee)
  * Kolom Y (Index 24) -> Email (jika GoFood)
- * Kolom Z (Index 25) -> Nama Pengguna (Grab Username / Shopee: selalu "allvbadmin")
- * Kolom AB (Index 27)-> Kata Sandi (Grab Password / Shopee: selalu "Shopee@321")
+ * Kolom Z (Index 25) -> Nama Pengguna (Grab: dari input / Shopee: sesuai BD dipilih)
+ * Kolom AB (Index 27)-> Kata Sandi (Grab: dari input / Shopee: sesuai BD dipilih)
  * Kolom AH (Index 33)-> Status (Selalu mengirim "Live")
  */
 
@@ -55,8 +55,8 @@ function doPost(e) {
       rowData[24] = data.email || "";      // Kolom Y: Email
     } else if (aplikatorLower.indexOf("shopee") !== -1) {
       rowData[22] = data.merchantName || ""; // Kolom W: Merchant Name
-      rowData[25] = "allvbadmin";              // Kolom Z: Nama Pengguna (hardcoded)
-      rowData[27] = "Shopee@321";              // Kolom AB: Kata Sandi (hardcoded)
+      rowData[25] = data.username || "";     // Kolom Z: Nama Pengguna (sesuai BD dipilih)
+      rowData[27] = data.password || "";     // Kolom AB: Kata Sandi (sesuai BD dipilih)
     } else if (aplikatorLower.indexOf("grab") !== -1 || aplikatorLower === "gr") {
       rowData[25] = data.username || "";   // Kolom Z: Nama Pengguna
       rowData[27] = data.password || "";   // Kolom AB: Kata Sandi

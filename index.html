@@ -125,10 +125,42 @@
             </div>
           </div>
 
-          <!-- Step 2: Aplikator Selection -->
+          <!-- Step 2: BD Selection -->
           <div class="form-section">
             <div class="section-title">
               <span class="step-num">2</span>
+              <h3>Pilih BD</h3>
+            </div>
+
+            <div class="form-grid">
+              <div class="input-group select-group">
+                <select id="bd-select" name="bdPenanggungJawab" required>
+                  <option value="" disabled selected hidden></option>
+                  <option value="BD A">BD A</option>
+                  <option value="BD B">BD B</option>
+                  <option value="BD C">BD C</option>
+                  <option value="BD D">BD D</option>
+                </select>
+                <label for="bd-select">BD Penanggung Jawab</label>
+                <span class="focus-bar"></span>
+                <span class="error-msg">Pilih BD penanggung jawab</span>
+                <div class="validation-icon">
+                  <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Aplikator Selection -->
+          <div class="form-section">
+            <div class="section-title">
+              <span class="step-num">3</span>
               <h3>Pilih Aplikator</h3>
             </div>
 
@@ -183,10 +215,10 @@
             </div>
           </div>
 
-          <!-- Step 3: Adaptive Credentials Fields -->
+          <!-- Step 4: Adaptive Credentials Fields -->
           <div class="form-section">
             <div class="section-title">
-              <span class="step-num">3</span>
+              <span class="step-num">4</span>
               <h3>Kredensial Akses</h3>
             </div>
 
@@ -389,43 +421,13 @@
         <p class="modal-desc">Data Anda telah divalidasi dan dienkripsi dengan aman. Berikut adalah payload data
           integrasi yang dihasilkan:</p>
 
-        <!-- Code / JSON Viewer -->
-        <div class="json-viewer-container">
-          <div class="json-header">
-            <span class="file-name">integration_payload.json</span>
-            <button class="copy-btn" id="copy-json-btn" aria-label="Salin JSON">
-              <span class="copy-text-default">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                </svg>
-                Salin
-              </span>
-              <span class="copy-text-success hidden">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                Tersalin!
-              </span>
-            </button>
-          </div>
-          <pre class="json-code"><code id="json-output"></code></pre>
+        <!-- Ringkasan Input -->
+        <div class="summary-container" id="submission-summary">
         </div>
       </div>
 
       <!-- Modal Actions -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="download-json-btn">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          Unduh JSON
-        </button>
         <button type="button" class="btn btn-primary" id="close-modal-btn">
           Isi Formulir Baru
         </button>
