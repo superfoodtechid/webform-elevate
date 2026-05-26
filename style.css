@@ -718,6 +718,34 @@ body {
   padding-left: 4px;
 }
 
+/* Disabled Input — abu-abu, tidak bisa diedit */
+.input-group input:disabled {
+  background: rgba(128, 128, 128, 0.08) !important;
+  border-color: rgba(128, 128, 128, 0.35) !important;
+  color: rgba(160, 160, 160, 0.85) !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+  opacity: 1; /* override browser default yg bikin terlalu pudar */
+}
+
+/* Label tetap float ke atas meski field disabled (karena ada value) */
+.input-group input:disabled ~ label {
+  top: -10px;
+  left: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  background-color: var(--bg-app);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: rgba(128, 128, 128, 0.7) !important;
+}
+
+/* Disabled pada grab: pertahankan border hijau neon, hilangkan glow box-shadow */
+#pane-grab .input-group input:disabled {
+  border-color: rgba(0, 177, 79, 0.65) !important;
+  box-shadow: none !important;
+}
+
 @keyframes shake {
 
   0%,

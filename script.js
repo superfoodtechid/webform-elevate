@@ -35,6 +35,85 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ubah ke true untuk mengirim ke Sheets, atau false untuk simulasi mock lokal saja
   const ENABLE_SHEET_SUBMISSION = true;
 
+  // URL CSV publik Google Sheet konfigurasi BD
+  const BD_CONFIG_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYSUnKOqk29LCktTxdb0wPLbWMbRaWRP3eC_UA4AwYod1FW6zDMhtLMC5ghIvot2B8upCDfBsn-TCP/pub?gid=0&single=true&output=csv";
+
+  // BD Map — akan diisi dari sheet saat halaman load
+  // Fallback hardcode digunakan jika fetch gagal
+  let bdMap = {
+    'BD Fadjar': { username: 'auto7303', password: 'Auto@7303' },
+    'BD B': { username: 'auto7304', password: 'Auto@7304_' },
+    'BD C': { username: 'auto7307', password: 'Auto@7307' },
+    'BD D': { username: 'auto7308', password: 'Auto@7308' }
+  };
+
+  // Isi dropdown dengan nama BD
+  function populateBdDropdown(bdNames) {
+    // Hapus semua opsi kecuali placeholder (index 0)
+    while (bdSelect.options.length > 1) {
+      bdSelect.remove(1);
+    }
+    bdNames.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      bdSelect.appendChild(opt);
+    });
+    console.log('[BD Dropdown] Opsi diperbarui:', bdNames);
+  }
+
+  /* ==========================================================================
+     LOAD BD MAP DARI GOOGLE SHEET (DINAMIS)
+     Row 6-9 spreadsheet | Kol T = username | Kol U = password | Kol X = nama BD
+     ========================================================================== */
+  async function loadBdMapFromSheet() {
+    try {
+      const resp = await fetch(BD_CONFIG_CSV_URL);
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const text = await resp.text();
+
+      // Pisahkan baris — handle \r\n dan \n
+      const rawLines = text.split(/\r?\n/);
+
+      // Baris spreadsheet 6-9 = index CSV 5-8 (header di baris 0 setelah judul)
+      // Namun karena baris 1 = judul grup (Go, Gr, S, Klikit), baris 2 = header kolom
+      // maka row 6 spreadsheet = rawLines[5]
+      const newMap = {};
+      const bdNames = [];
+      for (let i = 5; i <= 8; i++) {
+        if (!rawLines[i]) continue;
+
+        // Parse CSV sederhana (nilai tidak mengandung koma yang di-quote)
+        const cols = rawLines[i].split(',');
+
+        // Kol T = index 19, Kol U = index 20, Kol X = index 23
+        const username = (cols[19] || '').trim().replace(/^"|"$/g, '');
+        const password = (cols[20] || '').trim().replace(/^"|"$/g, '');
+        const bdName   = (cols[23] || '').trim().replace(/^"|"$/g, '');
+
+        if (bdName && username) {
+          newMap[bdName] = { username, password };
+          bdNames.push(bdName);
+        }
+      }
+
+      if (Object.keys(newMap).length > 0) {
+        bdMap = newMap;
+        console.log('[BD Map] Berhasil dimuat dari sheet:', bdMap);
+        populateBdDropdown(bdNames);
+      } else {
+        console.warn('[BD Map] Sheet tidak menghasilkan data valid, fallback ke hardcode.');
+        populateBdDropdown(Object.keys(bdMap));
+      }
+    } catch (err) {
+      console.warn('[BD Map] Gagal fetch sheet, gunakan hardcode:', err.message);
+      populateBdDropdown(Object.keys(bdMap));
+    }
+  }
+
+  // Mulai load BD map saat DOM siap (non-blocking)
+  loadBdMapFromSheet();
+
   /* ==========================================================================
      THEME STORAGE & TOGGLE SYSTEM
      ========================================================================== */
@@ -217,22 +296,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let contentHtml = '';
     if (target === 'gofood') {
-      const emailId = `gofood-email-${uniqueIdSuffix}`;
+      const emailDuckId = `gofood-email-duck-${uniqueIdSuffix}`;
+      const emailFoodmasterId = `gofood-email-foodmaster-${uniqueIdSuffix}`;
       contentHtml = `
         <div class="credential-row-content">
-          <div class="input-group">
-            <input type="email" id="${emailId}" class="gofood-email-input" name="gofoodEmail" required placeholder=" ">
-            <label for="${emailId}">Email Custom Manager</label>
-            <span class="focus-bar"></span>
-            <span class="error-msg">Email tidak valid</span>
-            <div class="validation-icon">
-              <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
+          <div class="form-grid">
+            <div class="input-group">
+              <input type="email" id="${emailDuckId}" class="gofood-email-duck-input" name="gofoodEmailDuck" required placeholder=" ">
+              <label for="${emailDuckId}">Email Duck</label>
+              <span class="focus-bar"></span>
+              <span class="error-msg">Email tidak valid</span>
+              <div class="validation-icon">
+                <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
+            </div>
+            <div class="input-group">
+              <input type="email" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" required placeholder=" ">
+              <label for="${emailFoodmasterId}">Email Foodmaster</label>
+              <span class="focus-bar"></span>
+              <span class="error-msg">Email tidak valid</span>
+              <div class="validation-icon">
+                <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
@@ -267,27 +364,12 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             </div>
             <div class="input-group password-group">
-              <input type="password" id="${passwordId}" class="grab-password-input" name="grabPassword" required placeholder=" ">
+              <input type="text" id="${passwordId}" class="grab-password-input" name="grabPassword" value="SuperFood@2026" disabled>
               <label for="${passwordId}">Password</label>
               <span class="focus-bar"></span>
-              <span class="error-msg">Password minimal 6 karakter</span>
-              <button type="button" class="password-toggle" aria-label="Tampilkan password">
-                <svg class="eye-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                <svg class="eye-off-icon hidden" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                </svg>
-              </button>
               <div class="validation-icon">
                 <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                   <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
               </div>
             </div>
@@ -436,8 +518,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     selectedAplikators.forEach(aplikator => {
       let selector = '';
-      if (aplikator === 'gofood') selector = '.gofood-email-input';
-      else if (aplikator === 'grab') selector = '.grab-username-input, .grab-password-input';
+      if (aplikator === 'gofood') selector = '.gofood-email-duck-input, .gofood-email-foodmaster-input';
+      else if (aplikator === 'grab') selector = '.grab-username-input';
       else if (aplikator === 'shopee') selector = '.shopee-portal-input';
 
       if (selector) {
@@ -462,18 +544,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     selectedAplikators.forEach(aplikator => {
       if (aplikator === 'gofood') {
-        const emailInputs = document.querySelectorAll('#pane-gofood .gofood-email-input');
+        const rows = document.querySelectorAll('#pane-gofood .credential-row-wrapper');
         credentialsPayload.gofood = [];
-        emailInputs.forEach(input => {
-          const emailVal = input.value.trim();
-          credentialsPayload.gofood.push({ email: emailVal });
+        rows.forEach(row => {
+          const duckEl = row.querySelector('.gofood-email-duck-input');
+          const foodmasterEl = row.querySelector('.gofood-email-foodmaster-input');
+          const emailDuckVal = duckEl ? duckEl.value.trim() : '';
+          const emailFoodmasterVal = foodmasterEl ? foodmasterEl.value.trim() : '';
+          credentialsPayload.gofood.push({ emailDuck: emailDuckVal, emailFoodmaster: emailFoodmasterVal });
 
           sheetsPayloads.push({
             owner: ownerNameInput.value.trim(),
             outlet: outletNameInput.value.trim(),
             bd: bdSelect.value,
             aplikator: 'GoFood',
-            email: emailVal
+            emailDuck: emailDuckVal,
+            emailFoodmaster: emailFoodmasterVal
           });
         });
       } else if (aplikator === 'grab') {
@@ -481,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
         credentialsPayload.grab = [];
         rows.forEach(row => {
           const userVal = row.querySelector('.grab-username-input').value.trim();
-          const passVal = row.querySelector('.grab-password-input').value.trim();
+          const passVal = 'SuperFood@2026'; // Password tetap/hardcode
           credentialsPayload.grab.push({ username: userVal, password: passVal });
 
           sheetsPayloads.push({
@@ -497,13 +583,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const portalInputs = document.querySelectorAll('#pane-shopee .shopee-portal-input');
         credentialsPayload.shopee = [];
 
-        // Mapping BD → kredensial (key sesuai value option di dropdown)
-        const bdMap = {
-          'BD A': { username: 'auto7303', password: 'Auto@7303' },
-          'BD B': { username: 'auto7304', password: 'Auto@7304_' },
-          'BD C': { username: 'auto7307', password: 'Auto@7307' },
-          'BD D': { username: 'auto7308', password: 'Auto@7308' }
-        };
+        // Gunakan bdMap yang sudah dimuat dari sheet (atau fallback)
         const selectedBd = bdSelect?.value || '';
         const bdCreds = bdMap[selectedBd] || { username: '', password: '' };
 
@@ -625,7 +705,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (data.kredensial.gofood && data.kredensial.gofood.length > 0) {
       html += `<div class="summary-platform">GoFood</div>`;
       data.kredensial.gofood.forEach((item, i) => {
-        html += `<div class="summary-row"><span class="summary-label">Email ${data.kredensial.gofood.length > 1 ? i + 1 : ''}</span><span class="summary-value">${item.email || '-'}</span></div>`;
+        const label = data.kredensial.gofood.length > 1 ? ` ${i + 1}` : '';
+        html += `<div class="summary-row"><span class="summary-label">Email Duck${label}</span><span class="summary-value">${item.emailDuck || '-'}</span></div>`;
+        html += `<div class="summary-row"><span class="summary-label">Email Foodmaster${label}</span><span class="summary-value">${item.emailFoodmaster || '-'}</span></div>`;
       });
       html += `<div class="summary-divider"></div>`;
     }

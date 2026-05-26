@@ -8,11 +8,38 @@
  * Kolom B (Index 1)  -> Nama Outlet (Nama Outlet)
  * Kolom D (Index 3)  -> Aplikasi (Nama Aplikator: GoFood / Grab / Shopee)
  * Kolom W (Index 22) -> Merchant Name (jika Shopee)
- * Kolom Y (Index 24) -> Email (jika GoFood)
- * Kolom Z (Index 25) -> Nama Pengguna (Grab: dari input / Shopee: sesuai BD dipilih)
- * Kolom AB (Index 27)-> Kata Sandi (Grab: dari input / Shopee: sesuai BD dipilih)
- * Kolom AH (Index 33)-> Status (Selalu mengirim "Live")
+ * Kolom Y (Index 24) -> Email Duck (jika GoFood)
+ * Kolom Z (Index 25) -> Email Foodmaster (jika GoFood)
+ * Kolom AA (Index 26) -> Nama Pengguna (Grab: dari input / Shopee: dari config sheet)
+ * Kolom AC (Index 28) -> Kata Sandi (Grab: dari input / Shopee: dari config sheet)
+ * Kolom AI (Index 34) -> Status (Selalu mengirim "Live")
+ *
+ * BD CONFIG (sheet pertama / gid=0):
+ * Baris 6-9, Kolom T (20) = Username, Kolom U (21) = Password, Kolom X (24) = Nama BD
  */
+
+/**
+ * Membaca kredensial BD dari sheet konfigurasi (sheet pertama, baris 6-9).
+ * @param {string} bdName - Nama BD, misal "BD A"
+ * @returns {{ username: string, password: string }}
+ */
+function getBdCredentials(bdName) {
+  var ss = SpreadsheetApp.openById("14eCb8DAEXhmbYj9MFj2KzC7AhkulbCbSNPltN2m-go0");
+  var configSheet = ss.getSheets()[0]; // Sheet pertama (gid=0)
+
+  // Baris 6-9, Kolom T=20, U=21, X=24 (1-indexed)
+  for (var row = 6; row <= 9; row++) {
+    var bdCell = configSheet.getRange(row, 24).getValue().toString().trim();
+    if (bdCell === bdName) {
+      var username = configSheet.getRange(row, 20).getValue().toString().trim();
+      var password = configSheet.getRange(row, 21).getValue().toString().trim();
+      return { username: username, password: password };
+    }
+  }
+
+  // Tidak ditemukan — kembalikan kosong
+  return { username: '', password: '' };
+}
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
@@ -36,9 +63,9 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
-    // Inisialisasi baris kosong sepanjang 34 kolom (Kolom A sampai AH)
+    // Inisialisasi baris kosong sepanjang 35 kolom (Kolom A sampai AI)
     var rowData = [];
-    for (var i = 0; i < 34; i++) {
+    for (var i = 0; i < 35; i++) {
       rowData.push("");
     }
     
@@ -46,20 +73,25 @@ function doPost(e) {
     rowData[0] = data.owner || "";         // Kolom A: Owner
     rowData[1] = data.outlet || "";        // Kolom B: Nama Outlet
     rowData[3] = data.aplikator || "";     // Kolom D: Aplikasi
-    rowData[33] = "Live";                  // Kolom AH: Status
+    rowData[34] = "Live";                  // Kolom AI: Status
     
     // 2. Pemetaan Data Kredensial sesuai jenis Aplikator
     var aplikatorLower = (data.aplikator || "").toLowerCase();
     
     if (aplikatorLower.indexOf("gofood") !== -1 || aplikatorLower === "go") {
-      rowData[24] = data.email || "";      // Kolom Y: Email
+      rowData[24] = data.emailDuck || "";          // Kolom Y: Email Duck
+      rowData[25] = data.emailFoodmaster || "";    // Kolom Z: Email Foodmaster
+
     } else if (aplikatorLower.indexOf("shopee") !== -1) {
-      rowData[22] = data.merchantName || ""; // Kolom W: Merchant Name
-      rowData[25] = data.username || "";     // Kolom Z: Nama Pengguna (sesuai BD dipilih)
-      rowData[27] = data.password || "";     // Kolom AB: Kata Sandi (sesuai BD dipilih)
+      // Baca kredensial BD langsung dari config sheet (bukan dari payload)
+      var bdCreds = getBdCredentials(data.bd || "");
+      rowData[22] = data.merchantName || "";  // Kolom W: Merchant Name
+      rowData[26] = bdCreds.username;          // Kolom AA: Username BD
+      rowData[28] = bdCreds.password;          // Kolom AC: Password BD
+
     } else if (aplikatorLower.indexOf("grab") !== -1 || aplikatorLower === "gr") {
-      rowData[25] = data.username || "";   // Kolom Z: Nama Pengguna
-      rowData[27] = data.password || "";   // Kolom AB: Kata Sandi
+      rowData[26] = data.username || "";   // Kolom AA: Nama Pengguna
+      rowData[28] = data.password || "";   // Kolom AC: Kata Sandi
     }
     
     // 3. Sisipkan baris baru secara presisi (Mengabaikan format/formula kosong di kolom lain)
