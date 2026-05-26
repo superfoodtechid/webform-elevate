@@ -75,11 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
       // Pisahkan baris — handle \r\n dan \n
       const rawLines = text.split(/\r?\n/);
 
-      // Data BD Shopee ada di baris CSV index 13-16
+      // Data BD Shopee ada di baris CSV index 9-12
+      // (embedded newline di cell email GoFood baris 3-4 menyebabkan CSV shift +4)
       // Kolom: Username = index 20, Password = index 21, Nama BD = index 24
       const newMap = {};
       const bdNames = [];
-      for (let i = 13; i <= 16; i++) {
+      for (let i = 9; i <= 12; i++) {
         if (!rawLines[i]) continue;
 
         // Parse CSV

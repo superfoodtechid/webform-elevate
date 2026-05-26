@@ -15,7 +15,7 @@
  * Kolom AI (Index 34) -> Status (Selalu mengirim "Live")
  *
  * BD CONFIG (sheet pertama / gid=0):
- * Baris 14-17, Kolom U (21) = Username, Kolom V (22) = Password, Kolom Y (25) = Nama BD
+ * Baris 8-11, Kolom U (21) = Username, Kolom V (22) = Password, Kolom Y (25) = Nama BD
  */
 
 /**
@@ -27,8 +27,8 @@ function getBdCredentials(bdName) {
   var ss = SpreadsheetApp.openById("14eCb8DAEXhmbYj9MFj2KzC7AhkulbCbSNPltN2m-go0");
   var configSheet = ss.getSheets()[0]; // Sheet pertama (gid=0)
 
-  // Baris 14-17, Kolom U=21, V=22, Y=25 (1-indexed)
-  for (var row = 14; row <= 17; row++) {
+  // Baris 8-11, Kolom U=21, V=22, Y=25 (1-indexed)
+  for (var row = 8; row <= 11; row++) {
     var bdCell = configSheet.getRange(row, 25).getValue().toString().trim();
     if (bdCell === bdName) {
       var username = configSheet.getRange(row, 21).getValue().toString().trim();
