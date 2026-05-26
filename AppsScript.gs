@@ -83,11 +83,10 @@ function doPost(e) {
       rowData[25] = data.emailFoodmaster || "";    // Kolom Z: Email Foodmaster
 
     } else if (aplikatorLower.indexOf("shopee") !== -1) {
-      // Baca kredensial BD langsung dari config sheet (bukan dari payload)
-      var bdCreds = getBdCredentials(data.bd || "");
+      // Username & Password dikirim langsung dari frontend (sudah di-resolve dari CSV)
       rowData[22] = data.merchantName || "";  // Kolom W: Merchant Name
-      rowData[26] = bdCreds.username;          // Kolom AA: Username BD
-      rowData[28] = bdCreds.password;          // Kolom AC: Password BD
+      rowData[26] = data.username || "";       // Kolom AA: Username BD
+      rowData[28] = data.password || "";       // Kolom AC: Password BD
 
     } else if (aplikatorLower.indexOf("grab") !== -1 || aplikatorLower === "gr") {
       rowData[26] = data.username || "";   // Kolom AA: Nama Pengguna
