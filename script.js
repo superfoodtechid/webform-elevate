@@ -67,29 +67,45 @@ document.addEventListener('DOMContentLoaded', () => {
      ========================================================================== */
   async function loadBdMapFromSheet() {
     try {
-      // URL ditambahkan parameter cache-busting timestamp (opsional tapi membantu)
-      const resp = await fetch(BD_CONFIG_CSV_URL + "&t=" + new Date().getTime());
+      const resp = await fetch(BD_CONFIG_CSV_URL);
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       const text = await resp.text();
 
-      // Simple CSV parser yang handle quotes
+      // Parser CSV yang lebih kuat
       const parseCSV = (str) => {
-        const arr = [];
-        let quote = false;
-        let row = 0, col = 0;
-        for (let c = 0; c < str.length; c++) {
-          let cc = str[c], nc = str[c+1];
-          arr[row] = arr[row] || [];
-          arr[row][col] = arr[row][col] || '';
-          if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; continue; }
-          if (cc == '"') { quote = !quote; continue; }
-          if (cc == ',' && !quote) { ++col; continue; }
-          if (cc == '\r' && nc == '\n' && !quote) { ++row; col = 0; ++c; continue; }
-          if (cc == '\n' && !quote) { ++row; col = 0; continue; }
-          if (cc == '\r' && !quote) { ++row; col = 0; continue; }
-          arr[row][col] += cc;
+        const rows = [];
+        let currentRow = [];
+        let currentCell = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < str.length; i++) {
+          const char = str[i];
+          const nextChar = str[i + 1];
+          
+          if (char === '"') {
+            if (inQuotes && nextChar === '"') {
+              currentCell += '"';
+              i++; // Skip the escaped quote
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (char === ',' && !inQuotes) {
+            currentRow.push(currentCell);
+            currentCell = '';
+          } else if (char === '\n' && !inQuotes) {
+            currentRow.push(currentCell);
+            rows.push(currentRow);
+            currentRow = [];
+            currentCell = '';
+          } else if (char === '\r' && !inQuotes) {
+            // Abaikan \r
+          } else {
+            currentCell += char;
+          }
         }
-        return arr;
+        currentRow.push(currentCell);
+        rows.push(currentRow);
+        return rows;
       };
 
       const rows = parseCSV(text);
