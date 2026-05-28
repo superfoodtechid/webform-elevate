@@ -110,6 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const rows = parseCSV(text);
 
+      console.log('[BD Debug] Total baris CSV yang ter-parse:', rows.length);
+
       const newMap = {};
       const bdNames = [];
       
@@ -117,13 +119,19 @@ document.addEventListener('DOMContentLoaded', () => {
       // Kolom 0-indexed: T (Username) = 19, U (Password) = 20, X (BD) = 23
       for (let i = 7; i <= 10; i++) {
         const cols = rows[i];
-        if (!cols || cols.length < 24) continue;
+        console.log(`[BD Debug] Row ${i} (${cols ? cols.length : 'null'} cols):`, cols ? cols.slice(15, 25) : 'KOSONG');
+
+        if (!cols || cols.length < 24) {
+          console.warn(`[BD Debug] Row ${i} dilewati: tidak cukup kolom (${cols ? cols.length : 0})`);
+          continue;
+        }
 
         const username = (cols[19] || '').trim();
         const password = (cols[20] || '').trim();
         const bdName   = (cols[23] || '').trim();
 
-        // Tambahkan ke map jika valid
+        console.log(`[BD Debug] Row ${i} → username="${username}", bdName="${bdName}"`);
+
         if (bdName && username) {
           newMap[bdName] = { username, password };
           if (!bdNames.includes(bdName)) {
@@ -131,6 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       }
+
+      console.log('[BD Debug] BD yang berhasil dimuat:', bdNames);
 
       if (Object.keys(newMap).length > 0) {
         bdMap = newMap;
