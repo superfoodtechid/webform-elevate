@@ -396,21 +396,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const usernameId = `grab-username-${uniqueIdSuffix}`;
       contentHtml = `
         <div class="credential-row-content">
-          <div class="form-grid">
-            <div class="input-group">
-              <input type="text" id="${usernameId}" class="grab-username-input" name="grabUsername" required placeholder=" ">
-              <label for="${usernameId}">Username</label>
-              <span class="focus-bar"></span>
-              <span class="error-msg">Username wajib diisi</span>
-              <div class="validation-icon">
-                <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </div>
+          <div class="input-group" style="width:100%;">
+            <input type="text" id="${usernameId}" class="grab-username-input" name="grabUsername" required placeholder=" ">
+            <label for="${usernameId}">Username</label>
+            <span class="focus-bar"></span>
+            <span class="error-msg">Username wajib diisi</span>
+            <div class="validation-icon">
+              <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
             </div>
           </div>
         </div>
