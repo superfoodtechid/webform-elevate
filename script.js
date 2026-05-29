@@ -916,16 +916,30 @@ document.addEventListener('DOMContentLoaded', () => {
       group.classList.remove('is-valid', 'is-invalid');
     });
 
-    // 3. Reset checkbox aplikator (unchecked semua)
+    // 3. Reset checkbox ke kondisi awal (GoFood checked, lainnya unchecked)
     aplikatorCheckboxes.forEach(cb => {
-      cb.checked = false;
-      toggleAplikatorPane(cb.value, false, true);
+      const isDefault = cb.value === 'gofood';
+      cb.checked = isDefault;
+      toggleAplikatorPane(cb.value, isDefault, true);
     });
 
-    // 4. Hapus semua dynamic credential rows dari setiap container
+    // 4. Untuk setiap container: hapus baris tambahan (index > 0),
+    //    lalu kosongkan nilai input di baris pertama (yang statis)
     ['gofood', 'grab', 'shopee'].forEach(app => {
       const container = document.getElementById(`${app}-rows-container`);
-      if (container) container.innerHTML = '';
+      if (!container) return;
+
+      const rows = container.querySelectorAll('.credential-row-wrapper');
+      rows.forEach((row, index) => {
+        if (index > 0) {
+          row.remove(); // hapus baris tambahan
+        } else {
+          // kosongkan value semua input di baris pertama
+          row.querySelectorAll('input').forEach(input => {
+            input.value = '';
+          });
+        }
+      });
     });
 
     // 5. Reset state tombol submit
