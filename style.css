@@ -677,18 +677,17 @@ body {
   transition: all var(--transition-fast);
 }
 
-.validation-icon svg {
+.validation-icon img {
   width: 18px;
   height: 18px;
+  object-fit: contain;
 }
 
 .validation-icon .valid {
-  color: HSL(var(--color-valid));
   display: none;
 }
 
 .validation-icon .invalid {
-  color: HSL(var(--color-invalid));
   display: none;
 }
 

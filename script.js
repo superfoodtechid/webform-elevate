@@ -333,14 +333,9 @@ document.addEventListener('DOMContentLoaded', () => {
               <label for="${emailDuckId}">Email Duck</label>
               <span class="focus-bar"></span>
               <span class="error-msg">Email tidak valid</span>
-              <div class="validation-icon">
-                <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+                            <div class="validation-icon">
+                <img class="valid" src="Logo/check.png" alt="Valid">
+                <img class="invalid" src="Logo/cross.png" alt="Invalid">
               </div>
             </div>
             <div class="input-group-with-suffix">
@@ -349,14 +344,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <label for="${emailFoodmasterId}">Email</label>
                 <span class="focus-bar"></span>
                 <span class="error-msg">Format tidak valid</span>
-                <div class="validation-icon">
-                  <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                  <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
+                                <div class="validation-icon">
+                  <img class="valid" src="Logo/check.png" alt="Valid">
+                  <img class="invalid" src="Logo/cross.png" alt="Invalid">
                 </div>
               </div>
               <span class="input-suffix">@myfoodmaster.com</span>
@@ -381,14 +371,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <label for="${usernameId}">Username</label>
             <span class="focus-bar"></span>
             <span class="error-msg">Username wajib diisi</span>
-            <div class="validation-icon">
-              <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
+                        <div class="validation-icon">
+              <img class="valid" src="Logo/check.png" alt="Valid">
+              <img class="invalid" src="Logo/cross.png" alt="Invalid">
             </div>
           </div>
         </div>
@@ -410,14 +395,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <label for="${portalId}">Nama Portal</label>
             <span class="focus-bar"></span>
             <span class="error-msg">Nama portal wajib diisi</span>
-            <div class="validation-icon">
-              <svg class="valid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <svg class="invalid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
+                        <div class="validation-icon">
+              <img class="valid" src="Logo/check.png" alt="Valid">
+              <img class="invalid" src="Logo/cross.png" alt="Invalid">
             </div>
           </div>
         </div>
