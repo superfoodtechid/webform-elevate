@@ -799,21 +799,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const modalTitle = document.getElementById('modal-title');
     const modalDesc = document.querySelector('.modal-desc');
-    const checkmarkSvg = document.querySelector('.checkmark-svg');
-    const checkmarkCircle = document.querySelector('.checkmark-circle');
+    const modalStatusIcon = document.getElementById('modal-status-icon');
 
     if (status === 'error') {
       modalTitle.textContent = "Sinkronisasi Gagal!";
       modalTitle.style.color = "HSL(var(--color-invalid))";
       modalDesc.innerHTML = `Gagal menyimpan ke Google Sheets. ${errorMsg ? `<br><small style="color:var(--text-muted)">Detail: ${errorMsg}</small>` : ''}`;
-      if (checkmarkSvg) checkmarkSvg.style.stroke = "#f59e0b";
-      if (checkmarkCircle) checkmarkCircle.style.stroke = "#f59e0b";
+      if (modalStatusIcon) modalStatusIcon.src = 'Logo/cross.png';
     } else {
       modalTitle.textContent = "Kredensial Berhasil Didaftarkan!";
       modalTitle.style.color = "var(--text-primary)";
       modalDesc.innerHTML = "Data berikut telah berhasil dikirim:";
-      if (checkmarkSvg) checkmarkSvg.style.stroke = "HSL(var(--color-valid))";
-      if (checkmarkCircle) checkmarkCircle.style.stroke = "HSL(var(--color-valid))";
+      if (modalStatusIcon) modalStatusIcon.src = 'Logo/check.png';
     }
 
     // Render ringkasan input yang mudah dibaca
