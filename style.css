@@ -731,11 +731,18 @@ body {
 
 .error-msg {
   display: none;
-  font-size: 11px;
-  font-weight: 600;
-  color: HSL(var(--color-invalid));
+  font-size: 14px;
+  font-weight: 700;
+  color: #ff4d4d;
   margin-top: 6px;
   padding-left: 4px;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 8px rgba(255, 77, 77, 0.45);
+}
+
+.error-msg::before {
+  content: '⚠ ';
+  font-style: normal;
 }
 
 /* Disabled Input — abu-abu, tidak bisa diedit */
