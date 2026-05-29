@@ -365,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="input-group-with-suffix">
               <div class="input-group">
-                <input type="text" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" required placeholder=" ">
+                <input type="text" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" placeholder=" ">
                 <label for="${emailFoodmasterId}">Email</label>
                 <span class="focus-bar"></span>
                 <span class="error-msg">Format tidak valid</span>
@@ -537,12 +537,13 @@ document.addEventListener('DOMContentLoaded', () => {
           const duckVal = duckEl ? duckEl.value.trim() : '';
           const foodmasterVal = foodmasterEl ? foodmasterEl.value.trim() : '';
 
-          if (duckVal === '' || foodmasterVal === '') {
+          if (duckVal === '') {
             allCredsValid = false;
           }
           if (duckEl && duckEl.closest('.input-group')?.classList.contains('is-invalid')) {
             allCredsValid = false;
           }
+          // foodmasterVal opsional — hanya validasi format jika diisi
           if (foodmasterEl && foodmasterEl.closest('.input-group')?.classList.contains('is-invalid')) {
             allCredsValid = false;
           }
@@ -892,7 +893,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const label = data.kredensial.grab.length > 1 ? ` ${i + 1}` : '';
         html += `
           <div class="summary-row"><span class="summary-label">Username${label}</span><span class="summary-value">${item.username || '-'}</span></div>
-          <div class="summary-row"><span class="summary-label">Password${label}</span><span class="summary-value">${item.password ? '••••••••' : '-'}</span></div>
         `;
       });
       html += `<div class="summary-divider"></div>`;
