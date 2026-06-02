@@ -35,8 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ubah ke true untuk mengirim ke Sheets, atau false untuk simulasi mock lokal saja
   const ENABLE_SHEET_SUBMISSION = true;
 
-  // URL pubhtml Google Sheet konfigurasi BD (sheet gid=565510790)
-  const BD_CONFIG_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYSUnKOqk29LCktTxdb0wPLbWMbRaWRP3eC_UA4AwYod1FW6zDMhtLMC5ghIvot2B8upCDfBsn-TCP/pubhtml?gid=565510790&single=true";
+  // URL pubhtml/sheet Google Sheet konfigurasi BD (sheet gid=565510790)
+  // Endpoint /pubhtml/sheet mengandung HTML tabel statis (tidak perlu JS untuk load)
+  const BD_CONFIG_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRYSUnKOqk29LCktTxdb0wPLbWMbRaWRP3eC_UA4AwYod1FW6zDMhtLMC5ghIvot2B8upCDfBsn-TCP/pubhtml/sheet?headers=false&gid=565510790";
 
   // BD Map — akan diisi dari sheet saat halaman load
   // Fallback hardcode digunakan jika fetch gagal
