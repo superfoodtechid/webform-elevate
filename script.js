@@ -144,6 +144,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mulai load BD map saat DOM siap (non-blocking)
   loadBdMapFromSheet();
 
+  // Sinkronisasi pilihan BD saat user mengeklik dropdown dengan indikator loading
+  let isSyncingBd = false;
+  async function syncBdMapWithLoader() {
+    if (isSyncingBd) return;
+    isSyncingBd = true;
+
+    const selectGroup = bdSelect.closest('.select-group');
+    const loader = selectGroup ? selectGroup.querySelector('.bd-sync-loader') : null;
+
+    if (selectGroup) selectGroup.classList.add('is-syncing');
+    if (loader) loader.classList.remove('hidden');
+
+    try {
+      await loadBdMapFromSheet();
+    } catch (err) {
+      console.warn('[BD Sync] Gagal sinkronisasi BD:', err);
+    } finally {
+      if (loader) loader.classList.add('hidden');
+      if (selectGroup) selectGroup.classList.remove('is-syncing');
+      isSyncingBd = false;
+    }
+  }
+
+  bdSelect.addEventListener('mousedown', syncBdMapWithLoader);
+  bdSelect.addEventListener('touchstart', syncBdMapWithLoader);
+
   /* ==========================================================================
      THEME STORAGE & TOGGLE SYSTEM
      ========================================================================== */

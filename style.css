@@ -626,6 +626,31 @@ body {
   right: 42px;
 }
 
+/* BD Sync Loader */
+.bd-sync-loader {
+  position: absolute;
+  right: 42px;
+  top: 17px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.bd-sync-loader .spinner {
+  width: 18px;
+  height: 18px;
+}
+
+.bd-sync-loader .spinner .path {
+  stroke: var(--text-muted);
+}
+
+.select-group.is-syncing .validation-icon {
+  display: none !important;
+}
+
 /* Hint Text */
 .field-hint {
   font-size: 11px;
