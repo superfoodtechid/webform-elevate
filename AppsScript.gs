@@ -13,6 +13,7 @@
  * Kolom G (Index 6)  -> Nama Pengguna (Grab: dari input / Shopee: dari config sheet)
  * Kolom H (Index 7)  -> Kata Sandi (Grab: dari input / Shopee: dari config sheet)
  * Kolom I (Index 8)  -> Nama BD (Pilihan BD dari dropdown)
+ * Kolom J (Index 9)  -> Nama Akses (jika GoFood)
  *
  * BD CONFIG (sheet pertama / gid=0):
  * Baris 8-11, Kolom T (20) = Username, Kolom U (21) = Password, Kolom X (24) = Nama BD
@@ -63,9 +64,9 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
-    // Inisialisasi baris kosong sepanjang 9 kolom (Kolom A sampai I)
+    // Inisialisasi baris kosong sepanjang 10 kolom (Kolom A sampai J)
     var rowData = [];
-    for (var i = 0; i < 9; i++) {
+    for (var i = 0; i < 10; i++) {
       rowData.push("");
     }
     
@@ -81,6 +82,7 @@ function doPost(e) {
     if (aplikatorLower.indexOf("gofood") !== -1 || aplikatorLower === "go") {
       rowData[4] = data.emailDuck || "";          // Kolom E: Email Duck
       rowData[5] = data.emailFoodmaster || "";    // Kolom F: Email Foodmaster
+      rowData[9] = data.namaAkses || "";          // Kolom J: Nama Akses
 
     } else if (aplikatorLower.indexOf("shopee") !== -1) {
       // Username & Password dikirim langsung dari frontend (sudah di-resolve dari CSV)

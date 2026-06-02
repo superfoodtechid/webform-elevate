@@ -324,10 +324,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let contentHtml = '';
     if (target === 'gofood') {
       const emailDuckId = `gofood-email-duck-${uniqueIdSuffix}`;
+      const namaAksesId = `gofood-nama-akses-${uniqueIdSuffix}`;
       const emailFoodmasterId = `gofood-email-foodmaster-${uniqueIdSuffix}`;
       contentHtml = `
         <div class="credential-row-content">
           <div class="form-grid">
+            <div class="input-group" style="grid-column: 1 / -1;">
+              <input type="text" id="${namaAksesId}" class="gofood-nama-akses-input" name="gofoodNamaAkses" required placeholder=" ">
+              <label for="${namaAksesId}">Nama Akses</label>
+              <span class="focus-bar"></span>
+              <span class="error-msg">Nama akses wajib diisi</span>
+                            <div class="validation-icon">
+                <img class="valid" src="Logo/check.png" alt="Valid">
+                <img class="invalid" src="Logo/cross.png" alt="Invalid">
+              </div>
+            </div>
             <div class="input-group">
               <input type="email" id="${emailDuckId}" class="gofood-email-duck-input" name="gofoodEmailDuck" required placeholder=" ">
               <label for="${emailDuckId}">Email Duck</label>
@@ -488,14 +499,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         rows.forEach(row => {
           const duckEl = row.querySelector('.gofood-email-duck-input');
+          const namaAksesEl = row.querySelector('.gofood-nama-akses-input');
           const foodmasterEl = row.querySelector('.gofood-email-foodmaster-input');
           const duckVal = duckEl ? duckEl.value.trim() : '';
-          const foodmasterVal = foodmasterEl ? foodmasterEl.value.trim() : '';
+          const namaAksesVal = namaAksesEl ? namaAksesEl.value.trim() : '';
 
           if (duckVal === '') {
             allCredsValid = false;
           }
+          if (namaAksesVal === '') {
+            allCredsValid = false;
+          }
           if (duckEl && duckEl.closest('.input-group')?.classList.contains('is-invalid')) {
+            allCredsValid = false;
+          }
+          // namaAkses wajib — validasi juga jika ada error
+          if (namaAksesEl && namaAksesEl.closest('.input-group')?.classList.contains('is-invalid')) {
             allCredsValid = false;
           }
           // foodmasterVal opsional — hanya validasi format jika diisi
@@ -616,7 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     selectedAplikators.forEach(aplikator => {
       let selector = '';
-      if (aplikator === 'gofood') selector = '.gofood-email-duck-input, .gofood-email-foodmaster-input';
+      if (aplikator === 'gofood') selector = '.gofood-email-duck-input, .gofood-nama-akses-input, .gofood-email-foodmaster-input';
       else if (aplikator === 'grab') selector = '.grab-username-input';
       else if (aplikator === 'shopee') selector = '.shopee-portal-input';
 
@@ -646,8 +665,10 @@ document.addEventListener('DOMContentLoaded', () => {
         credentialsPayload.gofood = [];
         rows.forEach(row => {
           const duckEl = row.querySelector('.gofood-email-duck-input');
+          const namaAksesEl = row.querySelector('.gofood-nama-akses-input');
           const foodmasterEl = row.querySelector('.gofood-email-foodmaster-input');
           const emailDuckVal = duckEl ? duckEl.value.trim() : '';
+          const namaAksesVal = namaAksesEl ? namaAksesEl.value.trim() : '';
           let emailFoodmasterVal = foodmasterEl ? foodmasterEl.value.trim() : '';
           if (emailFoodmasterVal === '@myfoodmaster.com') {
             emailFoodmasterVal = '';
@@ -655,12 +676,12 @@ document.addEventListener('DOMContentLoaded', () => {
             emailFoodmasterVal += '@myfoodmaster.com';
           }
 
-          // Skip if both fields are empty
-          if (emailDuckVal === '' && emailFoodmasterVal === '') {
+          // Skip jika semua field utama kosong
+          if (emailDuckVal === '' && namaAksesVal === '' && emailFoodmasterVal === '') {
             return;
           }
 
-          credentialsPayload.gofood.push({ emailDuck: emailDuckVal, emailFoodmaster: emailFoodmasterVal });
+          credentialsPayload.gofood.push({ emailDuck: emailDuckVal, namaAkses: namaAksesVal, emailFoodmaster: emailFoodmasterVal });
 
           sheetsPayloads.push({
             owner: ownerNameInput.value.trim(),
@@ -668,6 +689,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bd: bdSelect.value,
             aplikator: 'GoFood',
             emailDuck: emailDuckVal,
+            namaAkses: namaAksesVal,
             emailFoodmaster: emailFoodmasterVal
           });
         });
@@ -834,6 +856,9 @@ document.addEventListener('DOMContentLoaded', () => {
       data.kredensial.gofood.forEach((item, i) => {
         const label = data.kredensial.gofood.length > 1 ? ` ${i + 1}` : '';
         html += `<div class="summary-row"><span class="summary-label">Email Duck${label}</span><span class="summary-value">${item.emailDuck || '-'}</span></div>`;
+        if (item.namaAkses) {
+          html += `<div class="summary-row"><span class="summary-label">Nama Akses${label}</span><span class="summary-value">${item.namaAkses}</span></div>`;
+        }
         html += `<div class="summary-row"><span class="summary-label">Email Foodmaster${label}</span><span class="summary-value">${item.emailFoodmaster || '-'}</span></div>`;
       });
       html += `<div class="summary-divider"></div>`;
