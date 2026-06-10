@@ -42,8 +42,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // BD Map — akan diisi dari sheet saat halaman load
   let bdMap = {};
 
+  const CACHE_KEY = 'bdMapCache';
+  const CACHE_TTL = 5 * 60 * 1000; // 5 menit
+
   // Isi dropdown dengan nama BD
   function populateBdDropdown(bdNames) {
+    // Cek apakah opsi saat ini sama dengan data baru (menghindari opsi melompat saat user memilih)
+    const currentOptions = Array.from(bdSelect.options).map(opt => opt.value).filter(val => val !== '');
+    const isSame = currentOptions.length === bdNames.length && currentOptions.every((val, i) => val === bdNames[i]);
+    
+    if (isSame) {
+      console.log('[BD Dropdown] Opsi tidak berubah, skip update DOM.');
+      return;
+    }
+
+    // Simpan value yang sedang dipilih
+    const selectedValue = bdSelect.value;
+
     while (bdSelect.options.length > 1) {
       bdSelect.remove(1);
     }
@@ -53,14 +68,36 @@ document.addEventListener('DOMContentLoaded', () => {
       opt.textContent = name;
       bdSelect.appendChild(opt);
     });
+
+    // Kembalikan pilihan user jika ada di list yang baru
+    if (selectedValue && bdNames.includes(selectedValue)) {
+      bdSelect.value = selectedValue;
+    }
+
     console.log('[BD Dropdown] Opsi diperbarui:', bdNames);
   }
 
   /* ==========================================================================
      LOAD BD MAP DARI GOOGLE SHEET CSV (DINAMIS)
      ========================================================================== */
-  async function loadBdMapFromSheet() {
+  async function loadBdMapFromSheet(forceFetch = false) {
     try {
+      // Cek Cache Lokal agar loading instan
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached && !forceFetch) {
+        try {
+          const parsedCache = JSON.parse(cached);
+          if (Date.now() - parsedCache.timestamp < CACHE_TTL) {
+            bdMap = parsedCache.bdMap;
+            populateBdDropdown(parsedCache.bdNames);
+            console.log('[BD Cache] Menggunakan data cache.');
+            return;
+          }
+        } catch(e) {
+          console.warn('[BD Cache] Gagal membaca cache:', e);
+        }
+      }
+
       // Cache-busting agar selalu fresh dari Google Sheet
       const cacheBuster = `&t=${Date.now()}`;
       const resp = await fetch(BD_CONFIG_URL + cacheBuster, { cache: 'no-store' });
@@ -129,6 +166,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (Object.keys(newMap).length > 0) {
         bdMap = newMap;
+        
+        // Simpan ke cache
+        localStorage.setItem(CACHE_KEY, JSON.stringify({
+          timestamp: Date.now(),
+          bdMap: newMap,
+          bdNames: bdNames
+        }));
+
         console.log('[BD Map] Berhasil dimuat dari sheet:', bdMap);
         populateBdDropdown(bdNames);
       } else {
@@ -148,6 +193,18 @@ document.addEventListener('DOMContentLoaded', () => {
   let isSyncingBd = false;
   async function syncBdMapWithLoader() {
     if (isSyncingBd) return;
+    
+    // Jika cache masih valid, tidak perlu loading muter muter
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      try {
+        const parsedCache = JSON.parse(cached);
+        if (Date.now() - parsedCache.timestamp < CACHE_TTL) {
+           return; // Data masih fresh, skip fetch
+        }
+      } catch(e) {}
+    }
+
     isSyncingBd = true;
 
     const selectGroup = bdSelect.closest('.select-group');
@@ -157,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loader) loader.classList.remove('hidden');
 
     try {
-      await loadBdMapFromSheet();
+      await loadBdMapFromSheet(true); // Force fetch karena cache expire / tidak ada
     } catch (err) {
       console.warn('[BD Sync] Gagal sinkronisasi BD:', err);
     } finally {
