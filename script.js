@@ -262,6 +262,9 @@ document.addEventListener('DOMContentLoaded', () => {
   bdSelect.addEventListener('change', () => {
     updateBdSelectLabel();
     validateBdSelect();
+    // Validasi field sebelumnya agar user tahu jika ada yang terlewat
+    validateField(ownerNameInput);
+    validateField(outletNameInput);
   });
 
   function validateBdSelect() {
@@ -290,6 +293,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkbox.addEventListener('change', (e) => {
       toggleAplikatorPane(e.target.value, e.target.checked, false);
+      // Validasi field-field di atasnya (Owner, Outlet, BD) ketika user berinteraksi dengan checkbox
+      validateField(ownerNameInput);
+      validateField(outletNameInput);
+      validateBdSelect();
+
+      // Validasi langsung field di dalam pane yang aktif agar memunculkan tanda silang merah
+      document.querySelectorAll('.credential-pane.active').forEach(activePane => {
+        activePane.querySelectorAll('input').forEach(input => validateField(input));
+      });
     });
   });
 
@@ -303,9 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
       pane.classList.add('active');
     } else {
       pane.classList.remove('active');
-      // Matikan required attribute dan bersihkan styling validasi
+      // Bersihkan styling validasi
       inputs.forEach(input => {
-        input.removeAttribute('required');
         const group = input.closest('.input-group');
         if (group) {
           group.classList.remove('is-valid', 'is-invalid');
@@ -500,6 +511,9 @@ document.addEventListener('DOMContentLoaded', () => {
       firstInput.focus();
     }
 
+    // Validasi langsung baris baru agar tanda silang merah muncul jika kosong
+    rowWrapper.querySelectorAll('input').forEach(input => validateField(input));
+
     checkFormValidity();
   }
 
@@ -642,24 +656,37 @@ document.addEventListener('DOMContentLoaded', () => {
     let isValid = true;
     let errorMessage = '';
 
+    if (value === '') {
+      group.classList.remove('is-valid');
+      if (input.hasAttribute('required')) {
+        group.classList.add('is-invalid');
+        const errorMsgSpan = group.querySelector('.error-msg');
+        if (errorMsgSpan) {
+          errorMsgSpan.textContent = 'Wajib diisi';
+        }
+        return false;
+      } else {
+        group.classList.remove('is-invalid');
+        return true;
+      }
+    }
+
     // Validasi format (hanya jika field diisi)
-    if (value !== '') {
-      if (input.classList.contains('gofood-email-foodmaster-input') || input.classList.contains('gofood-email-duck-input')) {
-        if (/\s/.test(value) || /@/.test(value)) {
-          isValid = false;
-          errorMessage = 'Format tidak valid (tanpa @)';
-        }
-      } else if (input.type === 'email') {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) {
-          isValid = false;
-          errorMessage = 'Format email tidak valid';
-        }
-      } else if (input.classList.contains('grab-password-input')) {
-        if (value.length < 6) {
-          isValid = false;
-          errorMessage = 'Sandi minimal 6 karakter';
-        }
+    if (input.classList.contains('gofood-email-foodmaster-input') || input.classList.contains('gofood-email-duck-input')) {
+      if (/\s/.test(value) || /@/.test(value)) {
+        isValid = false;
+        errorMessage = 'Format tidak valid (tanpa @)';
+      }
+    } else if (input.type === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        isValid = false;
+        errorMessage = 'Format email tidak valid';
+      }
+    } else if (input.classList.contains('grab-password-input')) {
+      if (value.length < 6) {
+        isValid = false;
+        errorMessage = 'Sandi minimal 6 karakter';
       }
     }
 
@@ -695,9 +722,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Trigger visual validation (tidak memblokir submit)
-    validateField(ownerNameInput);
-    validateField(outletNameInput);
-    validateBdSelect();
+    let isFormValid = true;
+
+    if (!validateField(ownerNameInput)) isFormValid = false;
+    if (!validateField(outletNameInput)) isFormValid = false;
+    if (!validateBdSelect()) isFormValid = false;
 
     selectedAplikators.forEach(aplikator => {
       let selector = '';
@@ -707,12 +736,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (selector) {
         document.querySelectorAll(`#pane-${aplikator} ${selector}`).forEach(input => {
-          validateField(input);
+          if (!validateField(input) && input.hasAttribute('required')) {
+            isFormValid = false;
+          }
         });
       }
     });
 
-    // Langsung proses submit meskipun ada field kosong
+    if (!isFormValid) {
+      showToast('Form Tidak Lengkap', 'Mohon isi semua field yang wajib diisi (bertanda silang merah).', 'error');
+      return;
+    }
+
     executeSubmission(selectedAplikators);
   });
 
