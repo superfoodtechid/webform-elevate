@@ -421,7 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="input-group">
               <input type="text" id="${emailDuckId}" class="gofood-email-duck-input" name="gofoodEmailDuck" required placeholder=" ">
-              <label for="${emailDuckId}" style="color: #EF4444;">outlet1@byfoodmaster.com</label>
+              <label for="${emailDuckId}">Email FoodMaster 1</label>
               <span class="focus-bar"></span>
               <span class="error-msg">Format tidak valid</span>
                             <div class="validation-icon">
@@ -431,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="input-group">
               <input type="text" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" required placeholder=" ">
-              <label for="${emailFoodmasterId}" style="color: #EF4444;">outlet2@byfoodmaster.com</label>
+              <label for="${emailFoodmasterId}">Email FoodMaster 2</label>
               <span class="focus-bar"></span>
               <span class="error-msg">Format tidak valid</span>
                               <div class="validation-icon">
