@@ -838,7 +838,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
           }
 
-          const passVal = 'SuperFood@2026'; // Password tetap/hardcode
+          const passVal = 'masteR@2026'; // Password tetap/hardcode
           credentialsPayload.grab.push({ username: userVal, password: passVal });
 
           sheetsPayloads.push({
