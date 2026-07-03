@@ -387,10 +387,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Remove from DOM after animation completes
     rowWrapper.addEventListener('animationend', () => {
+      const isGofood = rowWrapper.closest('#gofood-rows-container') !== null;
       rowWrapper.remove();
+      if (isGofood) updateGofoodLabels();
       checkFormValidity();
     });
   });
+
+  function updateGofoodLabels() {
+    const container = document.getElementById('gofood-rows-container');
+    if (!container) return;
+    const rows = container.querySelectorAll('.credential-row-wrapper');
+    rows.forEach((row, i) => {
+      const duckInput = row.querySelector('.gofood-email-duck-input');
+      const foodmasterInput = row.querySelector('.gofood-email-foodmaster-input');
+      
+      if (duckInput) {
+        const label = duckInput.closest('.input-group').querySelector('label');
+        if (label) label.textContent = `Email FoodMaster ${(i * 2) + 1}`;
+      }
+      if (foodmasterInput) {
+        const label = foodmasterInput.closest('.input-group').querySelector('label');
+        if (label) label.textContent = `Email FoodMaster ${(i * 2) + 2}`;
+      }
+    });
+  }
 
   function addCredentialRow(target) {
     const container = document.getElementById(`${target}-rows-container`);
@@ -419,9 +440,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img class="invalid" src="Logo/cross.png" alt="Invalid">
               </div>
             </div>
-            <div class="input-group">
+            <div class="input-group has-inline-suffix">
               <input type="text" id="${emailDuckId}" class="gofood-email-duck-input" name="gofoodEmailDuck" required placeholder=" ">
               <label for="${emailDuckId}">Email FoodMaster 1</label>
+              <span class="inline-suffix">@byfoodmaster.com</span>
               <span class="focus-bar"></span>
               <span class="error-msg">Format tidak valid</span>
                             <div class="validation-icon">
@@ -429,9 +451,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img class="invalid" src="Logo/cross.png" alt="Invalid">
               </div>
             </div>
-            <div class="input-group">
+            <div class="input-group has-inline-suffix">
               <input type="text" id="${emailFoodmasterId}" class="gofood-email-foodmaster-input" name="gofoodEmailFoodmaster" required placeholder=" ">
               <label for="${emailFoodmasterId}">Email FoodMaster 2</label>
+              <span class="inline-suffix">@byfoodmaster.com</span>
               <span class="focus-bar"></span>
               <span class="error-msg">Format tidak valid</span>
                               <div class="validation-icon">
@@ -513,6 +536,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Validasi langsung baris baru agar tanda silang merah muncul jika kosong
     rowWrapper.querySelectorAll('input').forEach(input => validateField(input));
+
+    if (target === 'gofood') {
+      updateGofoodLabels();
+    }
 
     checkFormValidity();
   }
