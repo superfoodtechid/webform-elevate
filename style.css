@@ -450,18 +450,23 @@ body {
 .inline-suffix {
   position: absolute;
   right: 44px; /* just outside the 18px validation icon + 8px gap + 18px = ~44px */
-  top: 50%;
+  top: 26px;
   transform: translateY(-50%);
   font-family: var(--font-mono); /* monospace = predictable char width */
   font-size: 11px;
   font-weight: 400;
   letter-spacing: 0.02em;
   color: var(--text-muted);
-  opacity: 0.55;             /* extra dim so it feels like a ghost hint */
+  opacity: 0;             /* hidden by default to prevent overlap with resting label */
   pointer-events: none;
   white-space: nowrap;
   user-select: none;
   transition: opacity var(--transition-fast);
+}
+
+/* Show suffix only when input is focused and empty */
+.input-group.has-inline-suffix input:focus:placeholder-shown ~ .inline-suffix {
+  opacity: 0.55;
 }
 
 /* Hide suffix and restore padding when there's a value typed */
