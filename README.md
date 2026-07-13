@@ -40,14 +40,14 @@ flowchart LR
     GF --> GF_OUT["Sheet: Kol.E - Email Duck\nKol.F - Email Foodmaster\nKol.J - Nama Akses"]
 
     APP -- GrabFood --> GR[Input Username saja]
-    GR --> GR_OUT["Sheet: Kol.G - Username\nKol.H - Password default masteR@2026"]
+    GR --> GR_OUT["Sheet: Kol.G - Username\nKol.H - Password default"]
 
     APP -- ShopeeFood --> SH[Input Nama Portal]
     SH --> BD{BD yang Dipilih}
-    BD -- BD Fadjar --> SH_A[auto7303 / Auto@7303]
-    BD -- BD Edo --> SH_B[auto7304 / Auto@7304_]
-    BD -- BD C --> SH_C[auto7307 / Auto@7307]
-    BD -- BD Fando --> SH_D[auto7308 / Auto@7308]
+    BD -- BD Fadjar --> SH_A[Kredensial BD Fadjar]
+    BD -- BD Edo --> SH_B[Kredensial BD Edo]
+    BD -- BD C --> SH_C[Kredensial BD C]
+    BD -- BD Fando --> SH_D[Kredensial BD Fando]
     SH_A --> SH_OUT["Sheet: Kol.D - Merchant Name\nKol.G - Username BD\nKol.H - Password BD"]
     SH_B --> SH_OUT
     SH_C --> SH_OUT
@@ -76,7 +76,7 @@ flowchart LR
 
 1. **Adaptive Input Fields**: Tampilan kolom kredensial berubah secara dinamis berdasarkan aplikator terpilih:
    * **GoFood**: Input **Nama Akses**, **Email Duck**, dan **Email Foodmaster** (dengan suffix `@byfoodmaster.com` otomatis).
-   * **GrabFood**: Hanya input **Username** — Password `masteR@2026` dikirim otomatis ke sheet (tidak ditampilkan ke user).
+   * **GrabFood**: Hanya input **Username** — Password default dikirim otomatis ke sheet (tidak ditampilkan ke user).
    * **ShopeeFood**: Input **Nama Portal** — Username & Password BD diambil otomatis dari Google Sheet konfigurasi BD.
 2. **Dropdown BD Dinamis**: Pilihan BD (Business Development) diambil secara realtime dari Google Sheet konfigurasi BD setiap kali halaman dibuka.
 3. **Multi-Row Input**: Setiap aplikator mendukung penambahan akun lebih dari satu dengan tombol "Tambah".
@@ -124,7 +124,7 @@ superfood_webform/
 | E | Email Duck *(khusus GoFood)* |
 | F | Email Foodmaster *(khusus GoFood)* |
 | G | Username *(GrabFood: dari input / ShopeeFood: dari BD map)* |
-| H | Password *(GrabFood: `masteR@2026` / ShopeeFood: dari BD map)* |
+| H | Password *(GrabFood: Password default / ShopeeFood: dari BD map)* |
 | I | Nama BD |
 | J | Nama Akses *(khusus GoFood)* |
 
