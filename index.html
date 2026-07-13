@@ -88,9 +88,9 @@
               <!-- Owner Name Input -->
               <div class="input-group">
                 <input type="text" id="owner-name" name="ownerName" required placeholder=" ">
-                <label for="owner-name">Nama Owner</label>
+                <label for="owner-name">Nama Pemilik</label>
                 <span class="focus-bar"></span>
-                <span class="error-msg">Nama owner wajib diisi</span>
+                <span class="error-msg">Nama pemilik wajib diisi</span>
                 <div class="validation-icon">
                   <img class="valid" src="Logo/check.png" alt="Valid">
                   <img class="invalid" src="Logo/cross.png" alt="Invalid">
@@ -111,22 +111,22 @@
             </div>
           </div>
 
-          <!-- Step 2: BD Selection -->
+          <!-- Step 2: Tim FoodMaster Selection -->
           <div class="form-section">
             <div class="section-title">
               <span class="step-num">2</span>
-              <h3>Pilih BD</h3>
+              <h3>Pilih Tim FoodMaster</h3>
             </div>
 
             <div class="form-grid">
-              <div class="input-group select-group">
+              <div class="input-group select-group" style="grid-column: 1 / -1;">
                 <select id="bd-select" name="bdPenanggungJawab" required>
                   <option value="" disabled selected hidden></option>
                   <!-- Opsi BD diisi dinamis dari Google Sheet via script.js -->
                 </select>
-                <label for="bd-select">BD</label>
+                <label for="bd-select">Tim FoodMaster</label>
                 <span class="focus-bar"></span>
-                <span class="error-msg">Pilih BD</span>
+                <span class="error-msg">Pilih Tim FoodMaster</span>
                 <div class="bd-sync-loader hidden">
                   <svg class="spinner" viewBox="0 0 50 50">
                     <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
@@ -209,17 +209,18 @@
                   <div class="credential-row-wrapper">
                     <div class="credential-row-content">
                       <div class="form-grid">
-                        <!-- Nama Akses -->
+                        <!-- Nama Akses Pegawai -->
                         <div class="input-group" style="grid-column: 1 / -1;">
                           <input type="text" id="gofood-nama-akses" class="gofood-nama-akses-input"
                             name="gofoodNamaAkses" required placeholder=" ">
-                          <label for="gofood-nama-akses">Nama Akses</label>
+                          <label for="gofood-nama-akses">Nama Akses Pegawai</label>
                           <span class="focus-bar"></span>
                           <span class="error-msg">Nama akses wajib diisi</span>
                           <div class="validation-icon">
                             <img class="valid" src="Logo/check.png" alt="Valid">
                             <img class="invalid" src="Logo/cross.png" alt="Invalid">
                           </div>
+                          <span class="field-footnote">* Manager Custom</span>
                         </div>
                         <!-- Email Duck -->
                         <div class="input-group has-inline-suffix">
@@ -281,6 +282,7 @@
                           <img class="valid" src="Logo/check.png" alt="Valid">
                           <img class="invalid" src="Logo/cross.png" alt="Invalid">
                         </div>
+                        <span class="field-footnote">* Pemilik</span>
                       </div>
                     </div>
                   </div>
@@ -295,6 +297,16 @@
                     Tambah
                   </button>
                 </div>
+                <!-- Grab: Reset Password Toggle -->
+                <div class="toggle-field-row">
+                  <div class="toggle-field-label">
+                    <span>Sudah mereset kata sandi via email?</span>
+                  </div>
+                  <label class="toggle-switch" for="grab-reset-password">
+                    <input type="checkbox" id="grab-reset-password" name="grabResetPassword">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
               </div>
 
               <!-- Shopee Fields (Hidden by Default) -->
@@ -305,7 +317,7 @@
                 <div class="pane-rows-container" id="shopee-rows-container">
                   <div class="credential-row-wrapper">
                     <div class="credential-row-content">
-                      <div class="input-group">
+                      <div class="input-group" style="grid-column: 1 / -1;">
                         <input type="text" id="shopee-portal" class="shopee-portal-input" name="shopeePortal" required
                           placeholder=" ">
                         <label for="shopee-portal">Nama Portal</label>
@@ -315,6 +327,7 @@
                           <img class="valid" src="Logo/check.png" alt="Valid">
                           <img class="invalid" src="Logo/cross.png" alt="Invalid">
                         </div>
+                        <span class="field-footnote">* Pastikan kepenulisan Nama Portal sesuai (angka, simbol, huruf besar dan kecil)</span>
                       </div>
                     </div>
                   </div>
@@ -329,15 +342,95 @@
                     Tambah
                   </button>
                 </div>
+
+                <!-- Shopee: Static additional fields -->
+                <div class="shopee-static-fields">
+                  <div class="form-grid">
+                    <!-- Nomor HP Akses Pemilik -->
+                    <div class="input-group" style="grid-column: 1 / -1;">
+                      <input type="text" id="shopee-hp-pemilik" class="shopee-hp-input" name="shopeeHpPemilik" required placeholder=" ">
+                      <label for="shopee-hp-pemilik">Nomor HP Akses Pemilik</label>
+                      <span class="focus-bar"></span>
+                      <span class="error-msg">Nomor HP wajib diisi</span>
+                      <div class="validation-icon">
+                        <img class="valid" src="Logo/check.png" alt="Valid">
+                        <img class="invalid" src="Logo/cross.png" alt="Invalid">
+                      </div>
+                      <span class="field-footnote">* Nomor HP yg digunakan oleh Pemilik untuk login</span>
+                    </div>
+                    <!-- Username Akses Pemilik -->
+                    <div class="input-group">
+                      <input type="text" id="shopee-username-pemilik" class="shopee-username-pemilik-input" name="shopeeUsernamePemilik" placeholder=" ">
+                      <label for="shopee-username-pemilik">Username Akses Pemilik</label>
+                      <span class="focus-bar"></span>
+                      <div class="validation-icon">
+                        <img class="valid" src="Logo/check.png" alt="Valid">
+                        <img class="invalid" src="Logo/cross.png" alt="Invalid">
+                      </div>
+                      <span class="field-footnote">* Opsional</span>
+                    </div>
+                    <!-- Kata Sandi Akses Pemilik -->
+                    <div class="input-group password-group">
+                      <input type="password" id="shopee-password-pemilik" class="shopee-password-pemilik-input" name="shopeePasswordPemilik" placeholder=" ">
+                      <label for="shopee-password-pemilik">Kata Sandi Akses Pemilik</label>
+                      <span class="focus-bar"></span>
+                      <button type="button" class="password-toggle" aria-label="Tampilkan password">
+                        <svg class="eye-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        <svg class="eye-off-icon hidden" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                      </button>
+                      <div class="validation-icon">
+                        <img class="valid" src="Logo/check.png" alt="Valid">
+                        <img class="invalid" src="Logo/cross.png" alt="Invalid">
+                      </div>
+                      <span class="field-footnote">* Opsional</span>
+                    </div>
+                  </div>
+
+                  <!-- Toggle: Sudah menambah akses BD? -->
+                  <div class="toggle-field-row">
+                    <div class="toggle-field-label">
+                      <span>Sudah menambah akses BD?</span>
+                      <span class="toggle-footnote">* Sesuai nomor yg diberikan oleh kantor</span>
+                    </div>
+                    <label class="toggle-switch" for="shopee-akses-bd">
+                      <input type="checkbox" id="shopee-akses-bd" name="shopeeAksesBd">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <!-- Toggle: Sudah menambah akses utama? -->
+                  <div class="toggle-field-row">
+                    <div class="toggle-field-label">
+                      <span>Sudah menambah akses utama?</span>
+                      <span class="toggle-footnote">* 085136517286</span>
+                    </div>
+                    <label class="toggle-switch" for="shopee-akses-utama">
+                      <input type="checkbox" id="shopee-akses-utama" name="shopeeAksesUtama">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
               </div>
 
             </div>
           </div>
 
+          <!-- Syarat & Ketentuan -->
+          <div class="toggle-field-row sk-row">
+            <div class="toggle-field-label">
+              <span>Syarat &amp; Ketentuan</span>
+              <span class="toggle-footnote"><a href="#" id="sk-link" target="_blank" rel="noopener">* Baca Syarat &amp; Ketentuan</a></span>
+            </div>
+            <label class="toggle-switch" for="syarat-ketentuan">
+              <input type="checkbox" id="syarat-ketentuan" name="syaratKetentuan" required>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
           <!-- Submit Button -->
           <div class="form-action">
             <button type="submit" class="submit-btn" id="submit-btn" disabled>
-              <span class="btn-text">Submit</span>
+              <span class="btn-text">Kirim Formulir Pendaftaran</span>
               <span class="btn-spinner hidden">
                 <svg class="spinner" viewBox="0 0 50 50">
                   <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>

@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const ownerNameInput = document.getElementById('owner-name');
   const outletNameInput = document.getElementById('outlet-name');
   const bdSelect = document.getElementById('bd-select');
+  const syaratKetentuan = document.getElementById('syarat-ketentuan');
 
   let submittedData = null; // Storing submitted payload for export
 
@@ -227,6 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   bdSelect.addEventListener('mousedown', syncBdMapWithLoader);
   bdSelect.addEventListener('touchstart', syncBdMapWithLoader);
+
+  // Recheck form validity when S&K toggle changes
+  if (syaratKetentuan) {
+    syaratKetentuan.addEventListener('change', () => checkFormValidity());
+  }
 
   /* ==========================================================================
      THEME STORAGE & TOGGLE SYSTEM
@@ -660,10 +666,21 @@ document.addEventListener('DOMContentLoaded', () => {
             allCredsValid = false;
           }
         });
+        // Nomor HP Pemilik is required for Shopee
+        const hpInput = document.getElementById('shopee-hp-pemilik');
+        if (!hpInput || hpInput.value.trim() === '') {
+          allCredsValid = false;
+        }
       }
     });
 
     if (!allCredsValid) {
+      submitBtn.disabled = true;
+      return;
+    }
+
+    // 6. Syarat & Ketentuan
+    if (syaratKetentuan && !syaratKetentuan.checked) {
       submitBtn.disabled = true;
       return;
     }
@@ -761,7 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let selector = '';
       if (aplikator === 'gofood') selector = '.gofood-email-duck-input, .gofood-nama-akses-input, .gofood-email-foodmaster-input';
       else if (aplikator === 'grab') selector = '.grab-username-input';
-      else if (aplikator === 'shopee') selector = '.shopee-portal-input';
+      else if (aplikator === 'shopee') selector = '.shopee-portal-input, .shopee-hp-input';
 
       if (selector) {
         document.querySelectorAll(`#pane-${aplikator} ${selector}`).forEach(input => {
@@ -774,6 +791,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!isFormValid) {
       showToast('Form Tidak Lengkap', 'Mohon isi semua field yang wajib diisi (bertanda silang merah).', 'error');
+      return;
+    }
+
+    // Validate S&K
+    if (syaratKetentuan && !syaratKetentuan.checked) {
+      showToast('Syarat & Ketentuan', 'Harap centang Syarat & Ketentuan sebelum mengirim.', 'error');
       return;
     }
 
@@ -858,6 +881,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedBd = bdSelect?.value || '';
         const bdCreds = bdMap[selectedBd] || { username: '', password: '' };
 
+        // Extra static Shopee fields
+        const hpPemilik = (document.getElementById('shopee-hp-pemilik')?.value || '').trim();
+        const usernamePemilik = (document.getElementById('shopee-username-pemilik')?.value || '').trim();
+        const passwordPemilik = (document.getElementById('shopee-password-pemilik')?.value || '').trim();
+        const aksesBd = document.getElementById('shopee-akses-bd')?.checked || false;
+        const aksesUtama = document.getElementById('shopee-akses-utama')?.checked || false;
+
         portalInputs.forEach(input => {
           const portalVal = input.value.trim();
 
@@ -875,7 +905,12 @@ document.addEventListener('DOMContentLoaded', () => {
             aplikator: 'ShopeeFood',
             merchantName: portalVal,
             username: bdCreds.username,
-            password: bdCreds.password
+            password: bdCreds.password,
+            hpPemilik,
+            usernamePemilik,
+            passwordPemilik,
+            aksesBd,
+            aksesUtama
           });
         });
       }
@@ -1078,7 +1113,19 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // 5. Reset state tombol submit
+    // 5. Reset Shopee static fields
+    const shopeeStaticInputs = ['shopee-hp-pemilik', 'shopee-username-pemilik', 'shopee-password-pemilik'];
+    shopeeStaticInputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const shopeeToggles = ['shopee-akses-bd', 'shopee-akses-utama', 'grab-reset-password', 'syarat-ketentuan'];
+    shopeeToggles.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.checked = false;
+    });
+
+    // 6. Reset state tombol submit
     checkFormValidity();
   }
 
