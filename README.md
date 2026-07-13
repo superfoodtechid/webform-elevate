@@ -40,7 +40,7 @@ flowchart LR
     GF --> GF_OUT["Sheet: Kol.E - Email Duck\nKol.F - Email Foodmaster\nKol.J - Nama Akses"]
 
     APP -- GrabFood --> GR[Input Username saja]
-    GR --> GR_OUT["Sheet: Kol.G - Username\nKol.H - Password default SuperFood@2026"]
+    GR --> GR_OUT["Sheet: Kol.G - Username\nKol.H - Password default masteR@2026"]
 
     APP -- ShopeeFood --> SH[Input Nama Portal]
     SH --> BD{BD yang Dipilih}
@@ -76,7 +76,7 @@ flowchart LR
 
 1. **Adaptive Input Fields**: Tampilan kolom kredensial berubah secara dinamis berdasarkan aplikator terpilih:
    * **GoFood**: Input **Nama Akses**, **Email Duck**, dan **Email Foodmaster** (dengan suffix `@byfoodmaster.com` otomatis).
-   * **GrabFood**: Hanya input **Username** — Password `SuperFood@2026` dikirim otomatis ke sheet (tidak ditampilkan ke user).
+   * **GrabFood**: Hanya input **Username** — Password `masteR@2026` dikirim otomatis ke sheet (tidak ditampilkan ke user).
    * **ShopeeFood**: Input **Nama Portal** — Username & Password BD diambil otomatis dari Google Sheet konfigurasi BD.
 2. **Dropdown BD Dinamis**: Pilihan BD (Business Development) diambil secara realtime dari Google Sheet konfigurasi BD setiap kali halaman dibuka.
 3. **Multi-Row Input**: Setiap aplikator mendukung penambahan akun lebih dari satu dengan tombol "Tambah".
@@ -124,7 +124,7 @@ superfood_webform/
 | E | Email Duck *(khusus GoFood)* |
 | F | Email Foodmaster *(khusus GoFood)* |
 | G | Username *(GrabFood: dari input / ShopeeFood: dari BD map)* |
-| H | Password *(GrabFood: `SuperFood@2026` / ShopeeFood: dari BD map)* |
+| H | Password *(GrabFood: `masteR@2026` / ShopeeFood: dari BD map)* |
 | I | Nama BD |
 | J | Nama Akses *(khusus GoFood)* |
 

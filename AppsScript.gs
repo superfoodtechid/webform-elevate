@@ -8,11 +8,15 @@ function doPost(e) {
     var jsonString = e.postData.contents;
     var data = JSON.parse(jsonString);
     
-    // Target Google Spreadsheet ID
-    var sheetId = "14eCb8DAEXhmbYj9MFj2KzC7AhkulbCbSNPltN2m-go0";
-    var ss = SpreadsheetApp.openById(sheetId);
-    var sheet = ss.getSheetByName("Automation");
-    var sheetCredential = ss.getSheetByName("Credential");
+    // Target Google Spreadsheet IDs
+    var autoSheetId = "1KGuFkD1vAfSVay-GssS5vXKJbOKD4ngi9LVxjmfGkbk";
+    var credSheetId = "14eCb8DAEXhmbYj9MFj2KzC7AhkulbCbSNPltN2m-go0";
+    
+    var ssAuto = SpreadsheetApp.openById(autoSheetId);
+    var ssCred = SpreadsheetApp.openById(credSheetId);
+    
+    var sheet = ssAuto.getSheetByName("Automation");
+    var sheetCredential = ssCred.getSheetByName("Credential");
     
     if (!sheet || !sheetCredential) {
       return ContentService.createTextOutput(JSON.stringify({ 
