@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let submittedData = null; // Storing submitted payload for export
 
   // URL Google Apps Script Web App (Tempel URL Anda di sini setelah men-deploy Apps Script)
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx1GeEBNpiwNymIghNksgLu_XyVROUCqPxwC2q5HxGQEGDBrNcpZdhyZtyQZSKBc9xDTw/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby4DAGxj-QjdZG96rb1baeEimbyEfLTbhdUDvQtyEst-P4zEMTDG5Qc6gQ9WAavhC34Cw/exec";
   // Ubah ke true untuk mengirim ke Sheets, atau false untuk simulasi mock lokal saja
   const ENABLE_SHEET_SUBMISSION = true;
 
@@ -841,13 +841,13 @@ document.addEventListener('DOMContentLoaded', () => {
           credentialsPayload.gofood.push({ emailDuck: emailDuckFull, namaAkses: namaAksesVal, emailFoodmaster: emailFoodmasterVal });
 
           sheetsPayloads.push({
-            owner: ownerNameInput.value.trim(),
-            outlet: outletNameInput.value.trim(),
-            bd: bdSelect.value,
-            aplikator: 'GoFood',
-            emailDuck: emailDuckFull,
-            namaAkses: namaAksesVal,
-            emailFoodmaster: emailFoodmasterVal
+            "Nama Pemilik": ownerNameInput.value.trim(),
+            "Nama Outlet": outletNameInput.value.trim(),
+            "BD": bdSelect.value,
+            "Aplikasi": 'GoFood',
+            "Go Email FoodMaster1": emailDuckFull,
+            "Nama Akses Manager Custom": namaAksesVal,
+            "Go Email FoodMaster2": emailFoodmasterVal
           });
         });
       } else if (aplikator === 'grab') {
@@ -865,28 +865,22 @@ document.addEventListener('DOMContentLoaded', () => {
           credentialsPayload.grab.push({ username: userVal, password: passVal });
 
           sheetsPayloads.push({
-            owner: ownerNameInput.value.trim(),
-            outlet: outletNameInput.value.trim(),
-            bd: bdSelect.value,
-            aplikator: 'GrabFood',
-            username: userVal,
-            password: passVal
+            "Nama Pemilik": ownerNameInput.value.trim(),
+            "Nama Outlet": outletNameInput.value.trim(),
+            "BD": bdSelect.value,
+            "Aplikasi": 'GrabFood',
+            "Gr Username": userVal,
+            "Gr Kata Sandi": passVal
           });
         });
       } else if (aplikator === 'shopee') {
         const portalInputs = document.querySelectorAll('#pane-shopee .shopee-portal-input');
         credentialsPayload.shopee = [];
 
-        // Gunakan bdMap yang sudah dimuat dari sheet (atau fallback)
-        const selectedBd = bdSelect?.value || '';
-        const bdCreds = bdMap[selectedBd] || { username: '', password: '' };
-
         // Extra static Shopee fields
         const hpPemilik = (document.getElementById('shopee-hp-pemilik')?.value || '').trim();
         const usernamePemilik = (document.getElementById('shopee-username-pemilik')?.value || '').trim();
         const passwordPemilik = (document.getElementById('shopee-password-pemilik')?.value || '').trim();
-        const aksesBd = document.getElementById('shopee-akses-bd')?.checked || false;
-        const aksesUtama = document.getElementById('shopee-akses-utama')?.checked || false;
 
         portalInputs.forEach(input => {
           const portalVal = input.value.trim();
@@ -896,21 +890,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
           }
 
-          credentialsPayload.shopee.push({ namaPortal: portalVal, bd: selectedBd });
+          credentialsPayload.shopee.push({ namaPortal: portalVal, bd: bdSelect.value });
 
           sheetsPayloads.push({
-            owner: ownerNameInput.value.trim(),
-            outlet: outletNameInput.value.trim(),
-            bd: bdSelect.value,
-            aplikator: 'ShopeeFood',
-            merchantName: portalVal,
-            username: bdCreds.username,
-            password: bdCreds.password,
-            hpPemilik,
-            usernamePemilik,
-            passwordPemilik,
-            aksesBd,
-            aksesUtama
+            "Nama Pemilik": ownerNameInput.value.trim(),
+            "Nama Outlet": outletNameInput.value.trim(),
+            "BD": bdSelect.value,
+            "Aplikasi": 'ShopeeFood',
+            "S Nama Portal": portalVal,
+            "S Nomor HP Akses Pemilik": hpPemilik,
+            "S Username Akses Pemilik": usernamePemilik,
+            "S Kata Sandi Akses Pemilik": passwordPemilik
           });
         });
       }
