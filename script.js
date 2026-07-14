@@ -950,6 +950,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const rows = document.querySelectorAll('#pane-shopee .credential-row-wrapper');
         credentialsPayload.shopee = [];
 
+        const selectedBd = bdSelect?.value || '';
+        const bdCreds = bdMap[selectedBd] || { username: '', password: '' };
+
         rows.forEach(row => {
           const portalEl = row.querySelector('.shopee-portal-input');
           const hpEl = row.querySelector('.shopee-hp-input');
@@ -976,7 +979,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "S Nama Portal": portalVal,
             "S Nomor HP Akses Pemilik": hpPemilik,
             "S Username Akses Pemilik": usernamePemilik,
-            "S Kata Sandi Akses Pemilik": passwordPemilik
+            "S Kata Sandi Akses Pemilik": passwordPemilik,
+            "Shopee Username": bdCreds.username,
+            "Shopee Password": bdCreds.password
           });
         });
       }
