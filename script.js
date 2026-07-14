@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let submittedData = null; // Storing submitted payload for export
 
   // URL Google Apps Script Web App (Tempel URL Anda di sini setelah men-deploy Apps Script)
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx1GeEBNpiwNymIghNksgLu_XyVROUCqPxwC2q5HxGQEGDBrNcpZdhyZtyQZSKBc9xDTw/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby4DAGxj-QjdZG96rb1baeEimbyEfLTbhdUDvQtyEst-P4zEMTDG5Qc6gQ9WAavhC34Cw/exec";
   // Ubah ke true untuk mengirim ke Sheets, atau false untuk simulasi mock lokal saja
   const ENABLE_SHEET_SUBMISSION = true;
 
@@ -505,16 +505,67 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     } else if (target === 'shopee') {
       const portalId = `shopee-portal-${uniqueIdSuffix}`;
+      const hpId = `shopee-hp-pemilik-${uniqueIdSuffix}`;
+      const usernameId = `shopee-username-pemilik-${uniqueIdSuffix}`;
+      const passwordId = `shopee-password-pemilik-${uniqueIdSuffix}`;
+      
       contentHtml = `
         <div class="credential-row-content">
-          <div class="input-group">
-            <input type="text" id="${portalId}" class="shopee-portal-input" name="shopeePortal" required placeholder=" ">
-            <label for="${portalId}">Nama Portal</label>
-            <span class="focus-bar"></span>
-            <span class="error-msg">Nama portal wajib diisi</span>
-                        <div class="validation-icon">
-              <img class="valid" src="Logo/check.png" alt="Valid">
-              <img class="invalid" src="Logo/cross.png" alt="Invalid">
+          <div class="form-grid">
+            <div class="input-group" style="grid-column: 1 / -1;">
+              <input type="text" id="${portalId}" class="shopee-portal-input" name="shopeePortal" required placeholder=" ">
+              <label for="${portalId}">Nama Portal</label>
+              <span class="focus-bar"></span>
+              <span class="error-msg">Nama portal wajib diisi</span>
+              <div class="validation-icon">
+                <img class="valid" src="Logo/check.png" alt="Valid">
+                <img class="invalid" src="Logo/cross.png" alt="Invalid">
+              </div>
+              <span class="field-footnote">* Pastikan kepenulisan Nama Portal sesuai (angka, simbol, huruf besar dan kecil)</span>
+            </div>
+            <!-- Nomor HP Akses Pemilik -->
+            <div class="input-group" style="grid-column: 1 / -1;">
+              <input type="text" id="${hpId}" class="shopee-hp-input" name="shopeeHpPemilik" required placeholder=" ">
+              <label for="${hpId}">Nomor HP Akses Pemilik</label>
+              <span class="focus-bar"></span>
+              <span class="error-msg">Nomor HP wajib diisi</span>
+              <div class="validation-icon">
+                <img class="valid" src="Logo/check.png" alt="Valid">
+                <img class="invalid" src="Logo/cross.png" alt="Invalid">
+              </div>
+              <span class="field-footnote">* Nomor HP yg digunakan oleh Pemilik untuk login</span>
+            </div>
+            <!-- Username Akses Pemilik -->
+            <div class="input-group">
+              <input type="text" id="${usernameId}" class="shopee-username-pemilik-input" name="shopeeUsernamePemilik" placeholder=" ">
+              <label for="${usernameId}">Username Akses Pemilik</label>
+              <span class="focus-bar"></span>
+              <div class="validation-icon">
+                <img class="valid" src="Logo/check.png" alt="Valid">
+                <img class="invalid" src="Logo/cross.png" alt="Invalid">
+              </div>
+              <span class="field-footnote">* Opsional</span>
+            </div>
+            <!-- Kata Sandi Akses Pemilik -->
+            <div class="input-group password-group">
+              <input type="password" id="${passwordId}" class="shopee-password-pemilik-input" name="shopeePasswordPemilik" placeholder=" ">
+              <label for="${passwordId}">Kata Sandi Akses Pemilik</label>
+              <span class="focus-bar"></span>
+              <button type="button" class="password-toggle" aria-label="Tampilkan password">
+                <svg class="eye-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-off-icon hidden" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+              <div class="validation-icon">
+                <img class="valid" src="Logo/check.png" alt="Valid">
+                <img class="invalid" src="Logo/cross.png" alt="Invalid">
+              </div>
+              <span class="field-footnote">* Opsional</span>
             </div>
           </div>
         </div>
@@ -862,13 +913,13 @@ document.addEventListener('DOMContentLoaded', () => {
           credentialsPayload.gofood.push({ emailDuck: emailDuckFull, namaAkses: namaAksesVal, emailFoodmaster: emailFoodmasterVal });
 
           sheetsPayloads.push({
-            owner: ownerNameInput.value.trim(),
-            outlet: outletNameInput.value.trim(),
-            bd: bdSelect.value,
-            aplikator: 'GoFood',
-            emailDuck: emailDuckFull,
-            namaAkses: namaAksesVal,
-            emailFoodmaster: emailFoodmasterVal
+            "Nama Pemilik": ownerNameInput.value.trim(),
+            "Nama Outlet": outletNameInput.value.trim(),
+            "BD": bdSelect.value,
+            "Aplikasi": 'GoFood',
+            "Go Email FoodMaster1": emailDuckFull,
+            "Nama Akses Manager Custom": namaAksesVal,
+            "Go Email FoodMaster2": emailFoodmasterVal
           });
         });
       } else if (aplikator === 'grab') {
@@ -886,52 +937,45 @@ document.addEventListener('DOMContentLoaded', () => {
           credentialsPayload.grab.push({ username: userVal, password: passVal });
 
           sheetsPayloads.push({
-            owner: ownerNameInput.value.trim(),
-            outlet: outletNameInput.value.trim(),
-            bd: bdSelect.value,
-            aplikator: 'GrabFood',
-            username: userVal,
-            password: passVal
+            "Nama Pemilik": ownerNameInput.value.trim(),
+            "Nama Outlet": outletNameInput.value.trim(),
+            "BD": bdSelect.value,
+            "Aplikasi": 'GrabFood',
+            "Gr Username": userVal,
+            "Gr Kata Sandi": passVal
           });
         });
       } else if (aplikator === 'shopee') {
-        const portalInputs = document.querySelectorAll('#pane-shopee .shopee-portal-input');
+        const rows = document.querySelectorAll('#pane-shopee .credential-row-wrapper');
         credentialsPayload.shopee = [];
 
-        // Gunakan bdMap yang sudah dimuat dari sheet (atau fallback)
-        const selectedBd = bdSelect?.value || '';
-        const bdCreds = bdMap[selectedBd] || { username: '', password: '' };
-
-        // Extra static Shopee fields
-        const hpPemilik = (document.getElementById('shopee-hp-pemilik')?.value || '').trim();
-        const usernamePemilik = (document.getElementById('shopee-username-pemilik')?.value || '').trim();
-        const passwordPemilik = (document.getElementById('shopee-password-pemilik')?.value || '').trim();
-        const aksesBd = document.getElementById('shopee-akses-bd')?.checked || false;
-        const aksesUtama = document.getElementById('shopee-akses-utama')?.checked || false;
-
-        portalInputs.forEach(input => {
-          const portalVal = input.value.trim();
+        rows.forEach(row => {
+          const portalEl = row.querySelector('.shopee-portal-input');
+          const hpEl = row.querySelector('.shopee-hp-input');
+          const usernameEl = row.querySelector('.shopee-username-pemilik-input');
+          const passwordEl = row.querySelector('.shopee-password-pemilik-input');
+          
+          const portalVal = portalEl ? portalEl.value.trim() : '';
+          const hpPemilik = hpEl ? hpEl.value.trim() : '';
+          const usernamePemilik = usernameEl ? usernameEl.value.trim() : '';
+          const passwordPemilik = passwordEl ? passwordEl.value.trim() : '';
 
           // Skip if portal name is empty
           if (portalVal === '') {
             return;
           }
 
-          credentialsPayload.shopee.push({ namaPortal: portalVal, bd: selectedBd });
+          credentialsPayload.shopee.push({ namaPortal: portalVal, bd: bdSelect.value });
 
           sheetsPayloads.push({
-            owner: ownerNameInput.value.trim(),
-            outlet: outletNameInput.value.trim(),
-            bd: bdSelect.value,
-            aplikator: 'ShopeeFood',
-            merchantName: portalVal,
-            username: bdCreds.username,
-            password: bdCreds.password,
-            hpPemilik,
-            usernamePemilik,
-            passwordPemilik,
-            aksesBd,
-            aksesUtama
+            "Nama Pemilik": ownerNameInput.value.trim(),
+            "Nama Outlet": outletNameInput.value.trim(),
+            "BD": bdSelect.value,
+            "Aplikasi": 'ShopeeFood',
+            "S Nama Portal": portalVal,
+            "S Nomor HP Akses Pemilik": hpPemilik,
+            "S Username Akses Pemilik": usernamePemilik,
+            "S Kata Sandi Akses Pemilik": passwordPemilik
           });
         });
       }
