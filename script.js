@@ -744,7 +744,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (shopeeAksesUtama && !shopeeAksesUtama.checked) {
           allCredsValid = false;
         }
-      });
+      }
+    });
 
     if (!allCredsValid) {
       submitBtn.disabled = true;
