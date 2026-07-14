@@ -9,10 +9,13 @@ function doPost(e) {
     var data = JSON.parse(jsonString);
     
     var autoSheetId = "1KGuFkD1vAfSVay-GssS5vXKJbOKD4ngi9LVxjmfGkbk";
+    var credSheetId = "14eCb8DAEXhmbYj9MFj2KzC7AhkulbCbSNPltN2m-go0";
     
     var ssAuto = SpreadsheetApp.openById(autoSheetId);
+    var ssCred = SpreadsheetApp.openById(credSheetId);
     
     var sheetBot = ssAuto.getSheetByName("Bot");
+    var sheetCredential = ssCred.getSheetByName("Credential");
     
     if (!sheetBot) {
       return ContentService.createTextOutput(JSON.stringify({ 
@@ -57,6 +60,40 @@ function doPost(e) {
     // Tulis data tepat 1 baris di bawah outlet terakhir
     var insertRow = trueLastRow + 1;
     sheetBot.getRange(insertRow, 1, 1, rowDataBot.length).setValues([rowDataBot]);
+    
+    // ===== LOGIKA PENULISAN KE SHEET CREDENTIAL (KHUSUS SHOPEE) =====
+    if (sheetCredential && data["Aplikasi"] === "ShopeeFood") {
+      var rowDataCred = [];
+      for (var i = 0; i < 33; i++) {
+        rowDataCred.push("");
+      }
+      
+      // Identitas Baris
+      rowDataCred[0] = data["Nama Pemilik"] || "";     // Kolom A
+      rowDataCred[1] = data["Nama Outlet"] || "";      // Kolom B
+      rowDataCred[3] = data["Aplikasi"] || "";         // Kolom D
+      rowDataCred[32] = data["BD"] || "";              // Kolom AG
+      
+      // Data Shopee
+      rowDataCred[22] = data["S Nama Portal"] || "";              // Kolom W
+      rowDataCred[16] = data["S Username Akses Pemilik"] || "";   // Kolom Q
+      rowDataCred[17] = data["S Nomor HP Akses Pemilik"] || "";   // Kolom R
+      rowDataCred[18] = data["S Kata Sandi Akses Pemilik"] || ""; // Kolom S
+      rowDataCred[19] = "Owner";                                  // Kolom T
+      
+      // Cari baris terakhir di sheet Credential
+      var colBCred = sheetCredential.getRange("B:B").getValues();
+      var trueLastRowCred = 0;
+      for (var r = colBCred.length - 1; r >= 0; r--) {
+        if (colBCred[r][0] && colBCred[r][0].toString().trim() !== "") {
+          trueLastRowCred = r + 1;
+          break;
+        }
+      }
+      
+      var insertRowCred = trueLastRowCred + 1;
+      sheetCredential.getRange(insertRowCred, 1, 1, rowDataCred.length).setValues([rowDataCred]);
+    }
     
     // Kembalikan response sukses CORS-friendly
     return ContentService.createTextOutput(JSON.stringify({ 
