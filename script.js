@@ -652,6 +652,12 @@ document.addEventListener('DOMContentLoaded', () => {
             allCredsValid = false;
           }
         });
+        
+        // Wajib dicentang untuk Grab
+        const grabResetPassword = document.getElementById('grab-reset-password');
+        if (grabResetPassword && !grabResetPassword.checked) {
+          allCredsValid = false;
+        }
       } else if (aplikator === 'shopee') {
         const portalInputs = document.querySelectorAll('#pane-shopee .shopee-portal-input');
         if (portalInputs.length === 0) {
@@ -666,13 +672,28 @@ document.addEventListener('DOMContentLoaded', () => {
             allCredsValid = false;
           }
         });
-        // Nomor HP Pemilik is required for Shopee
-        const hpInput = document.getElementById('shopee-hp-pemilik');
-        if (!hpInput || hpInput.value.trim() === '') {
+        
+        // Nomor HP Pemilik is required for Shopee (dynamic rows)
+        const hpInputs = document.querySelectorAll('#pane-shopee .shopee-hp-input');
+        if (hpInputs.length === 0) {
           allCredsValid = false;
         }
-      }
-    });
+        hpInputs.forEach(hpInput => {
+          if (hpInput.value.trim() === '') {
+            allCredsValid = false;
+          }
+        });
+        
+        // Wajib dicentang untuk Shopee
+        const shopeeAksesBd = document.getElementById('shopee-akses-bd');
+        const shopeeAksesUtama = document.getElementById('shopee-akses-utama');
+        if (shopeeAksesBd && !shopeeAksesBd.checked) {
+          allCredsValid = false;
+        }
+        if (shopeeAksesUtama && !shopeeAksesUtama.checked) {
+          allCredsValid = false;
+        }
+      });
 
     if (!allCredsValid) {
       submitBtn.disabled = true;
