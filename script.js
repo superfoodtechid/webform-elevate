@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let submittedData = null; // Storing submitted payload for export
 
   // URL Google Apps Script Web App (Tempel URL Anda di sini setelah men-deploy Apps Script)
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx1GeEBNpiwNymIghNksgLu_XyVROUCqPxwC2q5HxGQEGDBrNcpZdhyZtyQZSKBc9xDTw/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby4DAGxj-QjdZG96rb1baeEimbyEfLTbhdUDvQtyEst-P4zEMTDG5Qc6gQ9WAavhC34Cw/exec";
   // Ubah ke true untuk mengirim ke Sheets, atau false untuk simulasi mock lokal saja
   const ENABLE_SHEET_SUBMISSION = true;
 
