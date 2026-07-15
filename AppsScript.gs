@@ -68,6 +68,7 @@ function doPost(e) {
       rowDataCred[0] = data["Nama Pemilik"] || "";     // Kolom A
       rowDataCred[1] = data["Nama Outlet"] || "";    // Kolom B
       rowDataCred[3] = data["Aplikasi"] || ""; // Kolom D
+      rowDataCred[12] = data["Portal"] || ""; // Kolom M
       rowDataCred[32] = data["BD"] || "";       // Kolom AG
       rowDataCred[33] = "Live";              // Kolom AH
       

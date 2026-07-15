@@ -889,7 +889,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (aplikator === 'gofood') {
         const rows = document.querySelectorAll('#pane-gofood .credential-row-wrapper');
         credentialsPayload.gofood = [];
-        rows.forEach(row => {
+        rows.forEach((row, index) => {
           const duckEl = row.querySelector('.gofood-email-duck-input');
           const namaAksesEl = row.querySelector('.gofood-nama-akses-input');
           const foodmasterEl = row.querySelector('.gofood-email-foodmaster-input');
@@ -920,13 +920,14 @@ document.addEventListener('DOMContentLoaded', () => {
             "Aplikasi": 'GoFood',
             "Go Email FoodMaster1": emailDuckFull,
             "Nama Akses Manager Custom": namaAksesVal,
-            "Go Email FoodMaster2": emailFoodmasterVal
+            "Go Email FoodMaster2": emailFoodmasterVal,
+            "Portal": index + 1
           });
         });
       } else if (aplikator === 'grab') {
         const rows = document.querySelectorAll('#pane-grab .credential-row-wrapper');
         credentialsPayload.grab = [];
-        rows.forEach(row => {
+        rows.forEach((row, index) => {
           const userVal = row.querySelector('.grab-username-input').value.trim();
 
           // Skip if username is empty
@@ -943,7 +944,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "BD": bdSelect.value,
             "Aplikasi": 'GrabFood',
             "Gr Username": userVal,
-            "Gr Kata Sandi": passVal
+            "Gr Kata Sandi": passVal,
+            "Portal": index + 1
           });
         });
       } else if (aplikator === 'shopee') {
@@ -953,7 +955,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedBd = bdSelect?.value || '';
         const bdCreds = bdMap[selectedBd] || { username: '', password: '' };
 
-        rows.forEach(row => {
+        rows.forEach((row, index) => {
           const portalEl = row.querySelector('.shopee-portal-input');
           const hpEl = row.querySelector('.shopee-hp-input');
           const usernameEl = row.querySelector('.shopee-username-pemilik-input');
@@ -981,7 +983,8 @@ document.addEventListener('DOMContentLoaded', () => {
             "S Username Akses Pemilik": usernamePemilik,
             "S Kata Sandi Akses Pemilik": passwordPemilik,
             "Shopee Username": bdCreds.username,
-            "Shopee Password": bdCreds.password
+            "Shopee Password": bdCreds.password,
+            "Portal": index + 1
           });
         });
       }
