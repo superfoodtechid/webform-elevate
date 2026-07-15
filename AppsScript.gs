@@ -75,8 +75,9 @@ function doPost(e) {
       
       if (aplikatorLower.indexOf("shopee") !== -1) {
         rowDataCred[22] = data["S Nama Portal"] || "";   // Kolom W
-        rowDataCred[25] = data["Shopee Username"] || "";       // Kolom Z
-        rowDataCred[27] = data["Shopee Password"] || "";       // Kolom AB
+        rowDataCred[26] = data["Shopee Username"] || "";       // Kolom AA
+        rowDataCred[28] = data["Shopee Password"] || "";       // Kolom AC
+        rowDataCred[29] = "Staff";                             // Kolom AD
         
         // Owner access Shopee
         rowDataCred[16] = data["S Username Akses Pemilik"] || ""; // Kolom Q
