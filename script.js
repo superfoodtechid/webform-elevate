@@ -615,6 +615,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   credentialForm.addEventListener('focusout', (e) => {
     if (e.target.tagName === 'INPUT') {
+      // Tindakan preventif: hapus whitespace di awal dan akhir saat user selesai menginput di field
+      if (['text', 'email', 'password'].includes(e.target.type)) {
+        e.target.value = e.target.value.trim();
+      }
       validateField(e.target);
     }
     checkFormValidity();
