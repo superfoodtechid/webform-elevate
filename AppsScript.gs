@@ -87,11 +87,12 @@ function doPost(e) {
         rowDataCred[19] = "Owner";                    // Kolom T
         
       } else if (aplikatorLower.indexOf("grab") !== -1 || aplikatorLower === "gr") {
-        rowDataCred[25] = data["Gr Username"] || ""; // Kolom Z
-        rowDataCred[27] = data["Gr Kata Sandi"] || ""; // Kolom AB
+        rowDataCred[26] = data["Gr Username"] || ""; // Kolom AA
+        rowDataCred[28] = data["Gr Kata Sandi"] || ""; // Kolom AC
         
       } else if (aplikatorLower.indexOf("gofood") !== -1 || aplikatorLower === "go") {
-        rowDataCred[24] = data["Go Email FoodMaster1"] || data["Go Email FoodMaster2"] || ""; // Kolom Y: Pakai salah satu email
+        rowDataCred[24] = data["Go Email FoodMaster1"] || ""; // Kolom Y
+        rowDataCred[25] = data["Go Email FoodMaster2"] || ""; // Kolom Z
       }
       
       // Cari baris terakhir di sheet Credential
