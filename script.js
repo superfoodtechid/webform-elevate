@@ -521,7 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img class="valid" src="Logo/check.png" alt="Valid">
                 <img class="invalid" src="Logo/cross.png" alt="Invalid">
               </div>
-              <span class="field-footnote">* Pastikan kepenulisan Nama Portal sesuai (angka, simbol, huruf besar dan kecil)</span>
+              <span class="field-footnote">* Lihat Pilih Merchant Lain pada ShopeePartner</span>
             </div>
             <!-- Nomor HP Akses Pemilik -->
             <div class="input-group" style="grid-column: 1 / -1;">
@@ -537,18 +537,19 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <!-- Username Akses Pemilik -->
             <div class="input-group">
-              <input type="text" id="${usernameId}" class="shopee-username-pemilik-input" name="shopeeUsernamePemilik" placeholder=" ">
-              <label for="${usernameId}">Username Akses Pemilik</label>
+              <input type="text" id="${usernameId}" class="shopee-username-pemilik-input" name="shopeeUsernamePemilik" required placeholder=" ">
+              <label for="${usernameId}">Username / No. HP Akses Pemilik</label>
               <span class="focus-bar"></span>
+              <span class="error-msg">Username / Nomor HP wajib diisi</span>
               <div class="validation-icon">
                 <img class="valid" src="Logo/check.png" alt="Valid">
                 <img class="invalid" src="Logo/cross.png" alt="Invalid">
               </div>
-              <span class="field-footnote">* Opsional</span>
+              <span class="field-footnote">* Lihat Akun Saya pada ShopeePartner</span>
             </div>
             <!-- Kata Sandi Akses Pemilik -->
             <div class="input-group password-group">
-              <input type="password" id="${passwordId}" class="shopee-password-pemilik-input" name="shopeePasswordPemilik" placeholder=" ">
+              <input type="password" id="${passwordId}" class="shopee-password-pemilik-input" name="shopeePasswordPemilik" required placeholder=" ">
               <label for="${passwordId}">Kata Sandi Akses Pemilik</label>
               <span class="focus-bar"></span>
               <button type="button" class="password-toggle" aria-label="Tampilkan password">
@@ -561,11 +562,12 @@ document.addEventListener('DOMContentLoaded', () => {
                   <line x1="1" y1="1" x2="23" y2="23"></line>
                 </svg>
               </button>
+              <span class="error-msg">Kata Sandi wajib diisi</span>
               <div class="validation-icon">
                 <img class="valid" src="Logo/check.png" alt="Valid">
                 <img class="invalid" src="Logo/cross.png" alt="Invalid">
               </div>
-              <span class="field-footnote">* Opsional</span>
+              <span class="field-footnote">* Jika memungkinkan, gunakan Master@123</span>
             </div>
           </div>
         </div>
@@ -728,7 +730,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
         
-        // Nomor HP Pemilik is required for Shopee (dynamic rows)
+        // Nomor HP, Username, Password Pemilik are required for Shopee (dynamic rows)
         const hpInputs = document.querySelectorAll('#pane-shopee .shopee-hp-input');
         if (hpInputs.length === 0) {
           allCredsValid = false;
@@ -738,14 +740,38 @@ document.addEventListener('DOMContentLoaded', () => {
             allCredsValid = false;
           }
         });
+
+        const usernameInputs = document.querySelectorAll('#pane-shopee .shopee-username-pemilik-input');
+        if (usernameInputs.length === 0) {
+          allCredsValid = false;
+        }
+        usernameInputs.forEach(uInput => {
+          if (uInput.value.trim() === '') {
+            allCredsValid = false;
+          }
+        });
+
+        const passwordInputs = document.querySelectorAll('#pane-shopee .shopee-password-pemilik-input');
+        if (passwordInputs.length === 0) {
+          allCredsValid = false;
+        }
+        passwordInputs.forEach(pInput => {
+          if (pInput.value.trim() === '') {
+            allCredsValid = false;
+          }
+        });
         
         // Wajib dicentang untuk Shopee
         const shopeeAksesBd = document.getElementById('shopee-akses-bd');
         const shopeeAksesUtama = document.getElementById('shopee-akses-utama');
+        const shopeeAksesBot = document.getElementById('shopee-akses-bot');
         if (shopeeAksesBd && !shopeeAksesBd.checked) {
           allCredsValid = false;
         }
         if (shopeeAksesUtama && !shopeeAksesUtama.checked) {
+          allCredsValid = false;
+        }
+        if (shopeeAksesBot && !shopeeAksesBot.checked) {
           allCredsValid = false;
         }
       }
@@ -855,7 +881,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let selector = '';
       if (aplikator === 'gofood') selector = '.gofood-email-duck-input, .gofood-nama-akses-input, .gofood-email-foodmaster-input';
       else if (aplikator === 'grab') selector = '.grab-username-input';
-      else if (aplikator === 'shopee') selector = '.shopee-portal-input, .shopee-hp-input';
+      else if (aplikator === 'shopee') selector = '.shopee-portal-input, .shopee-hp-input, .shopee-username-pemilik-input, .shopee-password-pemilik-input';
 
       if (selector) {
         document.querySelectorAll(`#pane-${aplikator} ${selector}`).forEach(input => {
@@ -975,7 +1001,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
           }
 
-          credentialsPayload.shopee.push({ namaPortal: portalVal, bd: bdSelect.value });
+          credentialsPayload.shopee.push({
+            namaPortal: portalVal,
+            hpPemilik: hpPemilik,
+            usernamePemilik: usernamePemilik,
+            passwordPemilik: passwordPemilik,
+            bd: bdSelect.value
+          });
 
           sheetsPayloads.push({
             "Nama Pemilik": ownerNameInput.value.trim(),
@@ -1089,12 +1121,22 @@ document.addEventListener('DOMContentLoaded', () => {
     successModal.classList.add('open');
   }
 
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function buildSummaryHTML(data) {
     if (!data) return '';
     let html = `
-      <div class="summary-row"><span class="summary-label">Owner</span><span class="summary-value">${data.namaOwner || '-'}</span></div>
-      <div class="summary-row"><span class="summary-label">Outlet</span><span class="summary-value">${data.namaOutlet || '-'}</span></div>
-      <div class="summary-row"><span class="summary-label">BD</span><span class="summary-value">${data.bd || '-'}</span></div>
+      <div class="summary-row"><span class="summary-label">Owner</span><span class="summary-value">${escapeHtml(data.namaOwner || '-')}</span></div>
+      <div class="summary-row"><span class="summary-label">Outlet</span><span class="summary-value">${escapeHtml(data.namaOutlet || '-')}</span></div>
+      <div class="summary-row"><span class="summary-label">BD</span><span class="summary-value">${escapeHtml(data.bd || '-')}</span></div>
       <div class="summary-divider"></div>
     `;
 
@@ -1103,10 +1145,14 @@ document.addEventListener('DOMContentLoaded', () => {
       data.kredensial.gofood.forEach((item, i) => {
         const label = data.kredensial.gofood.length > 1 ? ` ${i + 1}` : '';
         if (item.namaAkses) {
-          html += `<div class="summary-row"><span class="summary-label">Nama Akses${label}</span><span class="summary-value">${item.namaAkses}</span></div>`;
+          html += `<div class="summary-row"><span class="summary-label">Nama Akses${label}</span><span class="summary-value">${escapeHtml(item.namaAkses)}</span></div>`;
         }
-        html += `<div class="summary-row"><span class="summary-label">Email FoodMaster 1${label ? ' (' + label.trim() + ')' : ''}</span><span class="summary-value">${item.emailDuck || '-'}</span></div>`;
-        html += `<div class="summary-row"><span class="summary-label">Email FoodMaster 2${label ? ' (' + label.trim() + ')' : ''}</span><span class="summary-value">${item.emailFoodmaster || '-'}</span></div>`;
+        if (item.emailDuck) {
+          html += `<div class="summary-row"><span class="summary-label">Email FoodMaster 1${label ? ' (' + label.trim() + ')' : ''}</span><span class="summary-value">${escapeHtml(item.emailDuck)}</span></div>`;
+        }
+        if (item.emailFoodmaster) {
+          html += `<div class="summary-row"><span class="summary-label">Email FoodMaster 2${label ? ' (' + label.trim() + ')' : ''}</span><span class="summary-value">${escapeHtml(item.emailFoodmaster)}</span></div>`;
+        }
       });
       html += `<div class="summary-divider"></div>`;
     }
@@ -1115,9 +1161,9 @@ document.addEventListener('DOMContentLoaded', () => {
       html += `<div class="summary-platform">GrabFood</div>`;
       data.kredensial.grab.forEach((item, i) => {
         const label = data.kredensial.grab.length > 1 ? ` ${i + 1}` : '';
-        html += `
-          <div class="summary-row"><span class="summary-label">Username${label}</span><span class="summary-value">${item.username || '-'}</span></div>
-        `;
+        if (item.username) {
+          html += `<div class="summary-row"><span class="summary-label">Username${label}</span><span class="summary-value">${escapeHtml(item.username)}</span></div>`;
+        }
       });
       html += `<div class="summary-divider"></div>`;
     }
@@ -1125,8 +1171,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (data.kredensial.shopee && data.kredensial.shopee.length > 0) {
       html += `<div class="summary-platform">ShopeeFood</div>`;
       data.kredensial.shopee.forEach((item, i) => {
-        html += `<div class="summary-row"><span class="summary-label">Nama Portal ${data.kredensial.shopee.length > 1 ? i + 1 : ''}</span><span class="summary-value">${item.namaPortal || '-'}</span></div>`;
+        const label = data.kredensial.shopee.length > 1 ? ` ${i + 1}` : '';
+        if (item.namaPortal) {
+          html += `<div class="summary-row"><span class="summary-label">Nama Portal${label}</span><span class="summary-value">${escapeHtml(item.namaPortal)}</span></div>`;
+        }
+        if (item.hpPemilik) {
+          html += `<div class="summary-row"><span class="summary-label">No. HP Pemilik${label ? ' (' + label.trim() + ')' : ''}</span><span class="summary-value">${escapeHtml(item.hpPemilik)}</span></div>`;
+        }
+        if (item.usernamePemilik) {
+          html += `<div class="summary-row"><span class="summary-label">Username Pemilik${label ? ' (' + label.trim() + ')' : ''}</span><span class="summary-value">${escapeHtml(item.usernamePemilik)}</span></div>`;
+        }
+        if (item.passwordPemilik) {
+          html += `<div class="summary-row"><span class="summary-label">Kata Sandi Pemilik${label ? ' (' + label.trim() + ')' : ''}</span><span class="summary-value">${escapeHtml(item.passwordPemilik)}</span></div>`;
+        }
       });
+      html += `<div class="summary-divider"></div>`;
+    }
+
+    if (html.endsWith('<div class="summary-divider"></div>')) {
+      html = html.slice(0, -'<div class="summary-divider"></div>'.length);
     }
 
     return html;
@@ -1197,7 +1260,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
-    const shopeeToggles = ['shopee-akses-bd', 'shopee-akses-utama', 'grab-reset-password', 'syarat-ketentuan'];
+    const shopeeToggles = ['shopee-akses-bd', 'shopee-akses-utama', 'shopee-akses-bot', 'grab-reset-password', 'syarat-ketentuan'];
     shopeeToggles.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.checked = false;

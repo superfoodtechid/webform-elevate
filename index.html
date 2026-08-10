@@ -329,8 +329,7 @@
                             <img class="valid" src="Logo/check.png" alt="Valid">
                             <img class="invalid" src="Logo/cross.png" alt="Invalid">
                           </div>
-                          <span class="field-footnote">* Pastikan kepenulisan Nama Portal sesuai (angka, simbol, huruf
-                            besar dan kecil)</span>
+                          <span class="field-footnote">* Lihat Pilih Merchant Lain pada ShopeePartner</span>
                         </div>
                         <!-- Nomor HP Akses Pemilik -->
                         <div class="input-group" style="grid-column: 1 / -1;">
@@ -348,19 +347,20 @@
                         <!-- Username Akses Pemilik -->
                         <div class="input-group">
                           <input type="text" id="shopee-username-pemilik" class="shopee-username-pemilik-input"
-                            name="shopeeUsernamePemilik" placeholder=" ">
-                          <label for="shopee-username-pemilik">Username Akses Pemilik</label>
+                            name="shopeeUsernamePemilik" required placeholder=" ">
+                          <label for="shopee-username-pemilik">Username / No. HP Akses Pemilik</label>
                           <span class="focus-bar"></span>
+                          <span class="error-msg">Username / Nomor HP wajib diisi</span>
                           <div class="validation-icon">
                             <img class="valid" src="Logo/check.png" alt="Valid">
                             <img class="invalid" src="Logo/cross.png" alt="Invalid">
                           </div>
-                          <span class="field-footnote">* Opsional</span>
+                          <span class="field-footnote">* Lihat Akun Saya pada ShopeePartner</span>
                         </div>
                         <!-- Kata Sandi Akses Pemilik -->
                         <div class="input-group password-group">
                           <input type="password" id="shopee-password-pemilik" class="shopee-password-pemilik-input"
-                            name="shopeePasswordPemilik" placeholder=" ">
+                            name="shopeePasswordPemilik" required placeholder=" ">
                           <label for="shopee-password-pemilik">Kata Sandi Akses Pemilik</label>
                           <span class="focus-bar"></span>
                           <button type="button" class="password-toggle" aria-label="Tampilkan password">
@@ -378,11 +378,12 @@
                               <line x1="1" y1="1" x2="23" y2="23"></line>
                             </svg>
                           </button>
+                          <span class="error-msg">Kata Sandi wajib diisi</span>
                           <div class="validation-icon">
                             <img class="valid" src="Logo/check.png" alt="Valid">
                             <img class="invalid" src="Logo/cross.png" alt="Invalid">
                           </div>
-                          <span class="field-footnote">* Opsional</span>
+                          <span class="field-footnote">* Jika memungkinkan, gunakan Master@123</span>
                         </div>
                       </div>
                     </div>
@@ -415,10 +416,22 @@
                 <div class="toggle-field-row">
                   <div class="toggle-field-label">
                     <span>Sudah menambah akses utama untuk setiap Portal?</span>
-                    <span class="toggle-footnote">* 085136517286</span>
+                    <span class="toggle-footnote">* 085136517286 (Support)</span>
                   </div>
                   <label class="toggle-switch" for="shopee-akses-utama">
                     <input type="checkbox" id="shopee-akses-utama" name="shopeeAksesUtama">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <!-- Toggle: Sudah menambah akses Bot? -->
+                <div class="toggle-field-row">
+                  <div class="toggle-field-label">
+                    <span>Sudah menambah akses Bot untuk setiap Portal?</span>
+                    <span class="toggle-footnote">* 085136517313 (Bot)</span>
+                  </div>
+                  <label class="toggle-switch" for="shopee-akses-bot">
+                    <input type="checkbox" id="shopee-akses-bot" name="shopeeAksesBot">
                     <span class="toggle-slider"></span>
                   </label>
                 </div>
