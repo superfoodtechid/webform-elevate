@@ -1051,32 +1051,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Jika URL Apps Script aktif dan fitur diaktifkan, kirim data ke Google Sheets
     if (ENABLE_SHEET_SUBMISSION && WEB_APP_URL && WEB_APP_URL !== "YOUR_DEPLOYED_WEB_APP_URL") {
-      // Kirim sekuensial (satu per satu) untuk menghindari race condition pada LockService Apps Script
       (async () => {
-        const results = [];
-        for (const payload of sheetsPayloads) {
-          try {
-            const response = await fetch(WEB_APP_URL, {
-              method: "POST",
-              mode: "cors",
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify(payload)
-            });
-            const resData = await response.json();
-            results.push(resData);
-          } catch (err) {
-            results.push({ status: "error", message: err.toString() });
+        // Fungsi helper untuk mengirim dengan safe parsing dan auto-retry 1x
+        async function sendPayload(payloadData) {
+          const maxRetries = 1;
+          let lastError = null;
+
+          for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+              if (attempt > 0) {
+                // Jeda 1.5 detik sebelum mencoba ulang
+                await new Promise(r => setTimeout(r, 1500));
+              }
+
+              const response = await fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payloadData)
+              });
+
+              const text = await response.text();
+              let resData;
+              try {
+                resData = JSON.parse(text);
+              } catch (jsonErr) {
+                // Tangani jika respon server Google berupa teks atau terpotong tetapi ada indikasi success
+                if (text && (text.includes('"status":"success"') || text.includes('Kredensial berhasil'))) {
+                  resData = { status: "success", message: "Kredensial berhasil disinkronisasi ke Google Sheets!" };
+                } else {
+                  throw new Error("Respon server Google tidak dapat diparsing sebagai JSON.");
+                }
+              }
+
+              return resData;
+            } catch (err) {
+              lastError = err;
+              console.warn(`[AppsScript Sync] Percobaan ke-${attempt + 1} gagal:`, err);
+            }
           }
+
+          return { 
+            status: "error", 
+            message: lastError ? (lastError.message || lastError.toString()) : "Koneksi ke Google Sheets terputus." 
+          };
         }
 
-        const failed = results.filter(resData => resData.status !== "success");
-        if (failed.length === 0) {
+        // Kirim semua payload sekaligus sebagai batch (1 kali request POST cepat, aman, & bebas tabrakan lock)
+        const resData = await sendPayload(sheetsPayloads);
+
+        if (resData.status === "success") {
           showToast('Sinkronisasi Sukses', 'Semua kredensial berhasil disimpan di Google Sheets!', 'success');
           finalizeSubmission('success');
         } else {
-          const errMsgs = failed.map(f => f.message).join(', ');
-          showToast('Sinkronisasi Gagal', 'Beberapa data gagal disimpan ke Google Sheets.', 'error');
-          finalizeSubmission('error', errMsgs);
+          showToast('Sinkronisasi Gagal', resData.message || 'Gagal menyimpan ke Google Sheets.', 'error');
+          finalizeSubmission('error', resData.message || 'Gagal menyimpan ke Google Sheets.');
         }
       })().catch(error => {
         console.error("Error submitting to Sheets:", error);
