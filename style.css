@@ -364,6 +364,42 @@ body {
   line-height: 1.5;
 }
 
+.download-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 10px 16px;
+  border: 1px solid HSL(350, 85%, 55%, 0.35);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 13px;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.download-link span {
+  color: HSL(350, 85%, 60%);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.download-link:hover,
+.download-link:focus-visible {
+  background: var(--grad-primary);
+  border-color: transparent;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.download-link:hover span,
+.download-link:focus-visible span {
+  color: #fff;
+}
+
 /* ==========================================================================
    FORM COMPONENT STYLES
    ========================================================================== */
