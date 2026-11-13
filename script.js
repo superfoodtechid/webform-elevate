@@ -138,18 +138,20 @@ document.addEventListener('DOMContentLoaded', () => {
       // Kolom CSV dari gid=565510790 (0-indexed, tanpa offset th):
       // A(0)=No, B(1)=Portal, C(2)=Role, D(3)=Phone,
       // E(4)=Username, F(5)=Password, G(6)=Notes, H(7)=OTP, I(8)=BD
-      // Mulai dari baris sheet ke-7 → index ke-6 di array CSV
+      // Mulai dari baris ke-2 (index 1, skip header) agar semua BD terbaca
       let emptyStreak = 0;
-      for (let i = 6; i < rows.length; i++) {
+      for (let i = 1; i < rows.length; i++) {
         const cols = rows[i];
-        const bdName = (cols[8] || '').trim();
-
-        if (!bdName) {
+        const isRowEmpty = cols.every(cell => !cell || !cell.trim());
+        if (isRowEmpty) {
           emptyStreak++;
           if (emptyStreak >= 3) break;
           continue;
         }
         emptyStreak = 0;
+
+        const bdName = (cols[8] || '').trim();
+        if (!bdName) continue;
 
         const username = (cols[4] || '').trim();
         const password = (cols[5] || '').trim();
